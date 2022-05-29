@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Gymopedia.Infrastructure\Gymopedia.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
