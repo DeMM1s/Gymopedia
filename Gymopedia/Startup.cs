@@ -1,5 +1,7 @@
 ﻿using MediatR;
 
+using System.Reflection;
+using Gymopedia.Core.Clients;
 using Gymopedia.Extensions;
 
 namespace Gymopedia
@@ -20,8 +22,9 @@ namespace Gymopedia
         {
             services.AddControllers();
 
-            //services.AddMediatR(GetMediatrAssemblies().ToArray());
+            services.AddMediatR(GetMediatrAssemblies().ToArray());
 
+            services.AddDatabase(_configuration);
             services.AddAppDependencies(_configuration);
 
             services.AddEndpointsApiExplorer();
@@ -42,9 +45,9 @@ namespace Gymopedia
             });
         }
 
-        /*private IEnumerable<Assembly> GetMediatrAssemblies()
+        private IEnumerable<Assembly> GetMediatrAssemblies()
         {
-            yield return Assembly.GetAssembly(typeof(CreateProduct.Request))!;
-        }*/
+            yield return Assembly.GetAssembly(typeof(CreateClient.Request))!;
+        }
     }
 }
