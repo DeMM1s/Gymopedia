@@ -1,6 +1,8 @@
-﻿namespace Gymopedia.Domain.Models
+﻿using Gymopedia.Domain.Models;
+
+namespace Gymopedia.Core.Models
 {
-    public class Coach
+    public class CoachDto
     {
         public int Id { get; init; }
 
@@ -9,10 +11,5 @@
         public ICollection<Client> Clients { get; init; } = new List<Client>();
 
         public Calendar? Calendar { get; init; }
-
-        public Coach(string name)
-        {
-            Name = name;
-        }
     }
 }

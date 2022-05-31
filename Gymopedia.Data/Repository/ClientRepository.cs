@@ -4,9 +4,9 @@ using Gymopedia.Domain.Models;
 
 namespace Gymopedia.Data.Repository
 {
-    public class ClientRepository : Repository<ClientDbContext>, IClientRepository
+    public class ClientRepository : MasterRepository, IClientRepository
     {
-        public ClientRepository(IDbContextFactory<ClientDbContext> factory) : base(factory)
+        public ClientRepository(LocalDbContext context) : base(context)
         {
 
         }

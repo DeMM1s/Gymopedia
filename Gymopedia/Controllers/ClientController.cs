@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Gymopedia.Core.Models;
 using Gymopedia.Core.Clients;
+using Gymopedia.Inputs;
 using MediatR;
 
 namespace Gymopedia.Controllers
@@ -16,9 +17,11 @@ namespace Gymopedia.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("/create")]
-        public async Task<ClientDto> Create(CreateClient.Request request, CancellationToken cancellationToken)
+        [HttpPost]
+        [Route("/create")]
+        public async Task<ClientDto> CreateClient(CreateClientInput input, CancellationToken cancellationToken)
         {
+            var request = new CreateClient.Request(input.Name,input.CoachId);
             var createClientResponse = await _mediator.Send(request, cancellationToken);
 
             return new ClientDto

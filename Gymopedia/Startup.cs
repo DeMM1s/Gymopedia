@@ -2,6 +2,7 @@
 
 using System.Reflection;
 using Gymopedia.Core.Clients;
+using Gymopedia.Core.Coaches;
 using Gymopedia.Extensions;
 
 namespace Gymopedia
@@ -48,6 +49,7 @@ namespace Gymopedia
         private IEnumerable<Assembly> GetMediatrAssemblies()
         {
             yield return Assembly.GetAssembly(typeof(CreateClient.Request))!;
+            yield return Assembly.GetAssembly(typeof(CreateCoach.Request))!;
         }
     }
 }

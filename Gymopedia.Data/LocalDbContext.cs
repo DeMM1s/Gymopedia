@@ -3,12 +3,13 @@ using Gymopedia.Domain.Models;
 
 namespace Gymopedia.Data
 {
-    public class ClientDbContext : DbContext
+    public class LocalDbContext : DbContext
     {
-        public ClientDbContext(DbContextOptions<ClientDbContext> options) : base(options)
+        public LocalDbContext(DbContextOptions<LocalDbContext> options) : base(options)
         {
 
         }
         public DbSet<Client> Clients => Set<Client>();
+        public DbSet<Coach> Coaches => Set<Coach>();
     }
 }
