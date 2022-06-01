@@ -11,5 +11,8 @@ namespace Gymopedia.Data
         }
         public DbSet<Client> Clients => Set<Client>();
         public DbSet<Coach> Coaches => Set<Coach>();
+        public DbSet<Session> Sessions => Set<Session>();
+        public DbSet<CoachWorkDay> CoachWorkDays => Set<CoachWorkDay>();
+
     }
 }
