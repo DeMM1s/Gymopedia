@@ -14,5 +14,10 @@ namespace Gymopedia.Data.Repository
         {
             Context.Coaches.Add(coach);
         }
+        public async Task<Coach?> Get(int coachId, CancellationToken cancellationToken)
+        {
+            return await Context.Coaches.SingleOrDefaultAsync(o => o.Id == coachId, cancellationToken);
+        }
+
     }
 }
