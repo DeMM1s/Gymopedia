@@ -9,13 +9,14 @@ namespace Gymopedia.Extensions
     {
         public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            const string ConnectionName = "ClientDbConnection";
+            const string ConnectionName = "LocalDbConnection";
             var connectionString = configuration.GetConnectionString(ConnectionName);
 
-            services.AddDbContextFactory<ClientDbContext>(dbContextOptionsBuilder =>
+            services.AddDbContext<LocalDbContext>(dbContextOptionsBuilder =>
             dbContextOptionsBuilder.UseNpgsql(connectionString));
 
             services.AddTransient<IClientRepository, ClientRepository>();
+            services.AddTransient<ICoachRepository, CoachRepository>();
 
             return services;
         }

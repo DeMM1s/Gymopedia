@@ -3,13 +3,13 @@ using Gymopedia.Domain.Shared;
 
 namespace Gymopedia.Data
 {
-    public class Repository<TEntity> : IRepository, IDisposable, IAsyncDisposable where TEntity : DbContext
+    public class MasterRepository : IRepository, IDisposable, IAsyncDisposable
     {
-        protected TEntity Context;
+        protected LocalDbContext Context;
 
-        protected Repository(IDbContextFactory<TEntity> factory)
+        protected MasterRepository (LocalDbContext context)
         {
-            Context = factory.CreateDbContext();
+            Context = context;
         }
 
         public async Task Commit(CancellationToken cancellationToken)
