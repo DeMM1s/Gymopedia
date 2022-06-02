@@ -30,5 +30,14 @@ namespace Gymopedia.Controllers
                 CoachIds = createClientResponse.Client.CoachIds
             };
         }
+        [HttpGet("/get{clientId}")]
+        public async Task<IActionResult> Get(int clientId, CancellationToken cancellationToken)
+        {
+            var request = new GetClient.Request(clientId);
+
+            var getClientResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(getClientResponse);
+        }
     }
 }
