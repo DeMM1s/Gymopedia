@@ -36,7 +36,6 @@ namespace Gymopedia.Core.Sessions
                     CoachWorkDayId = request.CoachWorkDayId,
                 });
             }
-
         }
     }
 }
