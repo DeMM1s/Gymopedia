@@ -14,6 +14,6 @@ namespace Gymopedia.Core.Models
         public int CoachWorkDayId { get; init; }
         public ICollection<int> ClientIds { get; init; } = new List<int>();
 
-        private int _maxClient;
+        public int MaxClient;
     }
 }

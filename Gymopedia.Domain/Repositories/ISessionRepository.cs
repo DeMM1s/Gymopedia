@@ -3,7 +3,7 @@ using Gymopedia.Domain.Shared;
 
 namespace Gymopedia.Domain.Repositories
 {
-    public interface ISessionRepository
+    public interface ISessionRepository : IRepository
     {
         void Add(Session session);
 

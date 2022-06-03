@@ -7,9 +7,9 @@ namespace Gymopedia.Core.Sessions
 {
     public class CreateSession
     {
-        public record Request(string Name) : IRequest<Response>;
+        public record Request(DateTime From, DateTime Until, int MaxClient, int CoachWorkDayId) : IRequest<Response>;
 
-        public record Response(SessionDto session);
+        public record Response(SessionDto Session);
         public class Handler : IRequestHandler<Request, Response>
         {
             private readonly ISessionRepository _sessionRepository;
@@ -19,15 +19,21 @@ namespace Gymopedia.Core.Sessions
             }
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var coach = new Coach(
-                    request.Name);
+                var session = new Session(
+                    request.From,
+                    request.Until,
+                    request.MaxClient,
+                    request.CoachWorkDayId);
 
-                _coachRepository.Add(coach);
-                await _coachRepository.Commit(cancellationToken);
+                _sessionRepository.Add(session);
+                await _sessionRepository.Commit(cancellationToken);
 
-                return new Response(new CoachDto
+                return new Response(new SessionDto
                 {
-                    Name = request.Name
+                    From = request.From,
+                    Until = request.Until,
+                    MaxClient = request.MaxClient,
+                    CoachWorkDayId = request.CoachWorkDayId,
                 });
             }
 

@@ -3,9 +3,9 @@
     public class CoachWorkDay
     {
         public int Id { get; init; }
-        public DateOnly Date { get; init; }
+        public DateTime Date { get; init; }
         public ICollection<Session> sessions { get; init; } = new List<Session>();
-        public CoachWorkDay(DateOnly date)
+        public CoachWorkDay(DateTime date)
         {
             Date = date;
         }
