@@ -6,6 +6,6 @@ namespace Gymopedia.Core.Models
     {
         public int Id { get; init; }
         public DateTime Date { get; init; }
-        public ICollection<Session> sessions { get; init; } = new List<Session>();
+        public ICollection<Session> Sessions { get; init; } = new List<Session>();
     }
 }

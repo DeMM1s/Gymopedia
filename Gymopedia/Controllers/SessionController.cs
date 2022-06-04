@@ -6,6 +6,8 @@ using MediatR;
 
 namespace Gymopedia.Controllers
 {
+    [Route("/session")]
+    [ApiController]
     public class SessionController : Controller
     {
         private readonly IMediator _mediator;
@@ -15,7 +17,7 @@ namespace Gymopedia.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("/createCoach")]
+        [HttpPost("/createSession")]
         public async Task<SessionDto> CreateSession(CreateSessionInput input, CancellationToken cancellationToken)
         {
             var request = new CreateSession.Request(input.From, input.Until, input.MaxClient, input.CoachWorkDayId);

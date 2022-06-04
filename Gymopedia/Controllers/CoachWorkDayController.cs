@@ -27,7 +27,8 @@ namespace Gymopedia.Controllers
 
             return new CoachWorkDayDto
             {
-                Date = createCoachWorkDayResponse.CoachWorkDays.Date
+                Date = createCoachWorkDayResponse.CoachWorkDays.Date,
+                Sessions = createCoachWorkDayResponse.CoachWorkDays.Sessions
             };
         }
     }

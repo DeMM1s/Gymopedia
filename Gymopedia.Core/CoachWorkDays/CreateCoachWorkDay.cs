@@ -38,8 +38,8 @@ namespace Gymopedia.Core.CoachWorkDays
                     var createSessionResponse = await handler.Handle(reqiestSession, cancellationToken);
 
                     
-                    coachWorkDay.sessions.Add(
-                        new Domain.Models.Session(createSessionResponse.Session.From,
+                    coachWorkDay.Sessions.Add(
+                        new Session(createSessionResponse.Session.From,
                         createSessionResponse.Session.Until,
                         createSessionResponse.Session.MaxClient,
                         createSessionResponse.Session.CoachWorkDayId));
@@ -51,7 +51,8 @@ namespace Gymopedia.Core.CoachWorkDays
 
                 return new Response(new CoachWorkDayDto
                 {
-                    Date = coachWorkDay.Date
+                    Date = coachWorkDay.Date,
+                    Sessions = coachWorkDay.Sessions,
                 }) ;
             }
         }

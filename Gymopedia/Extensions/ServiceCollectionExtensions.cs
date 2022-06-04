@@ -17,6 +17,8 @@ namespace Gymopedia.Extensions
 
             services.AddTransient<IClientRepository, ClientRepository>();
             services.AddTransient<ICoachRepository, CoachRepository>();
+            services.AddTransient<ICoachWorkDayRepository, CoachWorkDayRepository>();
+            services.AddTransient<ISessionRepository, SessionRepository>();
 
             return services;
         }

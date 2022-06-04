@@ -3,6 +3,8 @@
 using System.Reflection;
 using Gymopedia.Core.Clients;
 using Gymopedia.Core.Coaches;
+using Gymopedia.Core.CoachWorkDays;
+using Gymopedia.Core.Sessions;
 using Gymopedia.Extensions;
 
 namespace Gymopedia
@@ -50,6 +52,8 @@ namespace Gymopedia
         {
             yield return Assembly.GetAssembly(typeof(CreateClient.Request))!;
             yield return Assembly.GetAssembly(typeof(CreateCoach.Request))!;
+            yield return Assembly.GetAssembly(typeof(CreateCoachWorkDay.Request))!;
+            yield return Assembly.GetAssembly(typeof(CreateSession.Request))!;
         }
     }
 }
