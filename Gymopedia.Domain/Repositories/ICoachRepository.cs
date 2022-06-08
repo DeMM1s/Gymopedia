@@ -8,5 +8,6 @@ namespace Gymopedia.Domain.Repositories
         void Add(Coach coach);
 
         Task<Coach?> Get(int coachId, CancellationToken cancellationToken);
+        Task<Coach?> Delete(int coachId, CancellationToken cancellationToken);
     }
 }
