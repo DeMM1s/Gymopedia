@@ -6,15 +6,15 @@ using MediatR;
 
 namespace Gymopedia.Core.Coaches
 {
-    public class DeleteClient
+    public class DeleteCoach
     {
         public record Request(int ID) : IRequest<Response>;
         public record Response(CoachDto? Coach, string? Error = null);
 
-        public class Heandler : IRequestHandler<Request, Response>
+        public class Handler : IRequestHandler<Request, Response>
         {
             private readonly ICoachRepository _coachRepository;
-            public Heandler(ICoachRepository coachRepository)
+            public Handler(ICoachRepository coachRepository)
             {
                 _coachRepository = coachRepository;
             }

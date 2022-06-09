@@ -11,10 +11,10 @@ namespace Gymopedia.Core.Clients
         public record Request(int ID) : IRequest<Response>;
         public record Response(ClientDto? Client, string? Error = null);
 
-        public class Heandler : IRequestHandler<Request, Response>
+        public class Handler : IRequestHandler<Request, Response>
         {
             private readonly IClientRepository _clientRepository;
-            public Heandler(IClientRepository clientRepository)
+            public Handler(IClientRepository clientRepository)
             {
                 _clientRepository = clientRepository;
             }
