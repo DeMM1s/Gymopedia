@@ -26,11 +26,11 @@ namespace Gymopedia.Core.CoachWorkDays
             
                 var coachWorkDay = new CoachWorkDay(request.From);
 
-                for (DateTime t = request.From; t < request.Until; t.AddHours(1))
+                for (DateTime current = request.From; current < request.Until; current.AddHours(1))
                 {
                     var reqiestSession = new CreateSession.Request(
-                        t,
-                        t.AddHours(1),
+                        current,
+                        current.AddHours(1),
                         request.MaxClient,
                         coachWorkDay.Id);
 

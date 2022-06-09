@@ -14,10 +14,23 @@ namespace Gymopedia.Data.Repository
         {
             Context.Coaches.Add(coach);
         }
+
         public async Task<Coach?> Get(int coachId, CancellationToken cancellationToken)
         {
             return await Context.Coaches.SingleOrDefaultAsync(o => o.Id == coachId, cancellationToken);
         }
 
+        public async Task<Coach?> Delete(int coachId, CancellationToken cancellationToken)
+        {
+            Coach? coach = await Context.Coaches.SingleOrDefaultAsync(o => o.Id == coachId, cancellationToken);
+            if (coach == null)
+            {
+                //throw new InvalidOperationException("Тренер с данным id не найден");
+                return null;
+            }
+            Context.Coaches.Remove(coach);
+            Context.SaveChanges();
+            return coach;
+        }
     }
 }
