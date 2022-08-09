@@ -13,6 +13,14 @@ namespace Gymopedia.Infrastructure.Constants
             {
                 public const string ClientNotFoundError = "Клиент с указанным id не найден";
             }
+            public static class CoachWorkDay
+            {
+                public const string CoachWorkDayNotFoundError = "День с указанным id не найден";
+            }
+            public static class Session
+            {
+                public const string SessionNotFoundError = "Сессия с указанным id не найдена";
+            }
         }
     }
 }

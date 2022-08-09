@@ -9,12 +9,12 @@ namespace Gymopedia.Core.Coaches
     public class GetCoach
     {
         public record Request(int ID) : IRequest<Response>;
-        public record Response(CoachDto? Coach, string? Error = null);
+        public record Response(Coach? Coach, string? Error = null);
 
-        public class Heandler : IRequestHandler<Request, Response>
+        public class Handler : IRequestHandler<Request, Response>
         {
             private readonly ICoachRepository _coachRepository;
-            public Heandler(ICoachRepository coachRepository)
+            public Handler(ICoachRepository coachRepository)
             {
                 _coachRepository = coachRepository;
             }
@@ -25,13 +25,7 @@ namespace Gymopedia.Core.Coaches
                 {
                     return new Response(null, Constants.ErrorMessage.Coach.CoachNotFoundError);
                 }
-                return new Response(new CoachDto
-                {
-                    Name = coach.Name,
-                    Id = coach.Id,
-                    Calendar = coach.Calendar,
-                    Clients = coach.Clients,
-                });
+                return new Response(coach);
             }
         }
     }
