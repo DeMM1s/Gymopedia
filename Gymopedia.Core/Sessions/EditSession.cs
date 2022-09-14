@@ -6,9 +6,9 @@ using MediatR;
 
 namespace Gymopedia.Core.Sessions
 {
-    public class GetSession
+    public class EditSession
     {
-        public record Request(int ID) : IRequest<Response>;
+        public record Request(Session Session) : IRequest<Response>;
         public record Response(Session? Session, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>
@@ -20,7 +20,7 @@ namespace Gymopedia.Core.Sessions
             }
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var session = await _sessionRepository.Get(request.ID, cancellationToken);
+                var session = await _sessionRepository.Get(request.Session.Id, cancellationToken);
                 if (session == null)
                 {
                     return new Response(null, Constants.ErrorMessage.Session.SessionNotFoundError);

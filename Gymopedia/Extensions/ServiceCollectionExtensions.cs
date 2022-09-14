@@ -9,16 +9,21 @@ namespace Gymopedia.Extensions
     {
         public static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
         {
-            const string ConnectionName = "LocalDbConnection";
-            var connectionString = configuration.GetConnectionString(ConnectionName);
+            //const string ConnectionName = "LocalDbConnection";
+            //var connectionString = configuration.GetConnectionString(ConnectionName);
+            var connectionString = "Host=127.0.0.1;Username=test;Password=test;Database=postgres;";
 
             services.AddDbContext<LocalDbContext>(dbContextOptionsBuilder =>
             dbContextOptionsBuilder.UseNpgsql(connectionString));
+            
+            
 
             services.AddTransient<IClientRepository, ClientRepository>();
             services.AddTransient<ICoachRepository, CoachRepository>();
             services.AddTransient<ICoachWorkDayRepository, CoachWorkDayRepository>();
             services.AddTransient<ISessionRepository, SessionRepository>();
+
+            //services.AddScoped(typeof(IClientRepository), typeof(ClientRepository));
 
             return services;
         }

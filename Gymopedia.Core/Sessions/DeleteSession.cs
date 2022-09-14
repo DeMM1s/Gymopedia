@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Gymopedia.Core.Sessions
 {
-    internal class DeleteSession
+    public class DeleteSession
     {
         public record Request(int ID) : IRequest<Response>;
         public record Response(SessionDto? Session, string? Error = null);

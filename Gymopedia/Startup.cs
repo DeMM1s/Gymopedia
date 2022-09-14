@@ -32,6 +32,7 @@ namespace Gymopedia
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
+
         }
 
         public void Configure(IApplicationBuilder app)

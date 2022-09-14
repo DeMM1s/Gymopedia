@@ -4,12 +4,13 @@ using Gymopedia.Domain.Models;
 using Gymopedia.Infrastructure.Constants;
 using MediatR;
 
+
 namespace Gymopedia.Core.Clients
 {
-    public class DeleteClient
+    public class EditClient
     {
         public record Request(int ID) : IRequest<Response>;
-        public record Response(ClientDto? Client, string? Error = null);
+        public record Response(Client? Client, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>
         {
@@ -20,18 +21,12 @@ namespace Gymopedia.Core.Clients
             }
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var client = await _clientRepository.Delete(request.ID, cancellationToken);
+                var client = await _clientRepository.Get(request.ID, cancellationToken);
                 if (client == null)
                 {
                     return new Response(null, Constants.ErrorMessage.Client.ClientNotFoundError);
                 }
-                return new Response(new ClientDto
-                {
-                    Name = client.Name,
-                    Id = client.Id,
-                    //CoachIds = client.CoachIds,
-                    TrainingSessions = client.TrainingSessions,
-                });
+                return new Response(client);
             }
         }
     }

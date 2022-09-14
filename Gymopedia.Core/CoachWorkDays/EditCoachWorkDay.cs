@@ -4,9 +4,10 @@ using Gymopedia.Domain.Models;
 using Gymopedia.Infrastructure.Constants;
 using MediatR;
 
+
 namespace Gymopedia.Core.CoachWorkDays
 {
-    public class GetCoachWorkDay
+    public class EditCoachWorkDay
     {
         public record Request(int ID) : IRequest<Response>;
         public record Response(CoachWorkDay? СoachWorkDay, string? Error = null);

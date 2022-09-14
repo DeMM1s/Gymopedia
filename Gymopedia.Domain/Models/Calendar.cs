@@ -5,9 +5,9 @@
         public int Id { get; init; }
         public int CoachId { get; init; }
         public ICollection<CoachWorkDay> CoachWorkDays { get; init; } = new List<CoachWorkDay>();
-        public Calendar(int coachid)
+        public Calendar(/*int coachid*/)
         {
-            CoachId = coachid;
+            //CoachId = coachid;
         }
     }
 }

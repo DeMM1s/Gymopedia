@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Gymopedia.Core.CoachWorkDays
 {
-    internal class DeleteCoachWorkDay
+    public class DeleteCoachWorkDay
     {
         public record Request(int ID) : IRequest<Response>;
         public record Response(CoachWorkDayDto? СoachWorkDay, string? Error = null);

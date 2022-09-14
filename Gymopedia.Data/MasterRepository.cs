@@ -3,7 +3,7 @@ using Gymopedia.Domain.Shared;
 
 namespace Gymopedia.Data
 {
-    public class MasterRepository : IRepository, IDisposable, IAsyncDisposable
+    public class MasterRepository : IRepository, IDisposable//, IAsyncDisposable
     {
         protected LocalDbContext Context;
 
@@ -19,16 +19,33 @@ namespace Gymopedia.Data
 
 
         #region Dispose
-
         public void Dispose()
         {
-            throw new NotImplementedException();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        public ValueTask DisposeAsync()
+        protected virtual void Dispose(bool disposing)
         {
-            throw new NotImplementedException();
+            if (disposing)
+            {
+                if (Context != null)
+                {
+                    Context.Dispose();
+                    Context = null;
+                }
+            }
         }
+        //public void dispose()
+        //{
+        //    throw new notimplementedexception();
+        //}
+
+        //public valuetask disposeasync()
+        //{
+        //    Dispose(true);
+        //    GC.SuppressFinalize(this);
+        //}
 
         #endregion
     }
