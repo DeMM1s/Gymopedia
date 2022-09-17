@@ -28,14 +28,35 @@ namespace Gymopedia.Controllers
                 Name = createCoachResponse.Coach.Name
             };
         }
-        [HttpGet("/get{coachId}")]
-        public async Task<IActionResult> Get(int coachtId, CancellationToken cancellationToken)
+        [HttpGet]
+        [Route("/getCoach")]
+        public async Task<IActionResult> Get(int coachId, CancellationToken cancellationToken)
         {
-            var request = new GetCoach.Request(coachtId);
+            var request = new GetCoach.Request(coachId);
 
             var getCoachResponse = await _mediator.Send(request, cancellationToken);
 
             return Ok(getCoachResponse);
+        }
+        [HttpPut]
+        [Route("/editCoach")]
+        public async Task<IActionResult> Edit(int coachId, CancellationToken cancellationToken)
+        {
+            var request = new EditCoach.Request(coachId);
+
+            var editCoachResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(editCoachResponse);
+        }
+        [HttpDelete]
+        [Route("/deleteCoach")]
+        public async Task<IActionResult> Delete(int coachId, CancellationToken cancellationToken)
+        {
+            var request = new DeleteCoach.Request(coachId);
+
+            var deleteCoachResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(deleteCoachResponse);
         }
     }
 }

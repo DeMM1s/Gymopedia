@@ -20,8 +20,7 @@ namespace Gymopedia.Core.Clients
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 var client = new Client(
-                    request.Name,
-                    request.CoachId);
+                    request.Name);
 
                 //client.CoachIds.Add(request.CoachId);
 

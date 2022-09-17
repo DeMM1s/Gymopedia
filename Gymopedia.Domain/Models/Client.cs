@@ -5,14 +5,13 @@
         public int Id { get; init; }
         public string Name { get; init; }
 
-        public ICollection<CoachIdsList> CoachIds { get; init; } = new List<CoachIdsList>();
+        public ICollection<Coach> CoachIds { get; init; } = new List<Coach>();
         public ICollection<Session> TrainingSessions { get; init; } = new List<Session>();
 
         public Client() { }
-        public Client(string name, int coachId)
+        public Client(string name)
         {
             Name = name;
-            CoachIds.Add(new CoachIdsList(0, coachId));
         }
     }
 }
