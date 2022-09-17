@@ -7,8 +7,8 @@ namespace Gymopedia.Domain.Models
         public int Id { get; init; }
         public DateTime From { get; init; }
         public DateTime Until { get; init; }
-        public int CoachWorkDayId { get; init; }
-        public ICollection<ClientIdsList> ClientIds { get; init; } = new List<ClientIdsList>();
+        public int CoachWorkDayIdOwner { get; init; }
+        public ICollection<Client> Clients { get; init; } = new List<Client>();
 
         private int _maxClient;
         public Session()
@@ -20,7 +20,7 @@ namespace Gymopedia.Domain.Models
             From = from;
             Until = until;
             _maxClient = maxClient;
-            CoachWorkDayId = coachWorkDayId;
+            CoachWorkDayIdOwner = coachWorkDayId;
         }
 
 

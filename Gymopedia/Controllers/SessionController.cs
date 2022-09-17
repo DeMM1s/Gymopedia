@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Gymopedia.Core.Models;
 using Gymopedia.Inputs;
+using Gymopedia.Domain.Models;
 using Gymopedia.Core.Sessions;
 using MediatR;
 
@@ -31,6 +32,36 @@ namespace Gymopedia.Controllers
                 ClientIds = createSessionResponse.Session.ClientIds,
                 CoachWorkDayId = createSessionResponse.Session.CoachWorkDayId,
             };
+        }
+        [HttpGet]
+        [Route("/getSession")]
+        public async Task<IActionResult> Get(int sessionId, CancellationToken cancellationToken)
+        {
+            var request = new GetSession.Request(sessionId);
+
+            var getSessionResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(getSessionResponse);
+        }
+        [HttpPut]
+        [Route("/editSession")]
+        public async Task<IActionResult> Edit(Session session, CancellationToken cancellationToken)
+        {
+            var request = new EditSession.Request(session);
+
+            var editSessionResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(editSessionResponse);
+        }
+        [HttpDelete]
+        [Route("/deleteSession")]
+        public async Task<IActionResult> Delete(int sessionId, CancellationToken cancellationToken)
+        {
+            var request = new DeleteSession.Request(sessionId);
+
+            var deleteSessionResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(deleteSessionResponse);
         }
     }
 }

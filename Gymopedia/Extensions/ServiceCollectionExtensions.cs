@@ -11,7 +11,7 @@ namespace Gymopedia.Extensions
         {
             //const string ConnectionName = "LocalDbConnection";
             //var connectionString = configuration.GetConnectionString(ConnectionName);
-            var connectionString = "Host=127.0.0.1;Username=test;Password=test;Database=postgres;";
+            var connectionString = "Host=127.0.0.1;Username=test;Password=test;Database=test;";
 
             services.AddDbContext<LocalDbContext>(dbContextOptionsBuilder =>
             dbContextOptionsBuilder.UseNpgsql(connectionString));

@@ -31,5 +31,35 @@ namespace Gymopedia.Controllers
                 Sessions = createCoachWorkDayResponse.CoachWorkDays.Sessions
             };
         }
+        [HttpGet]
+        [Route("/getCoachWorkDay")]
+        public async Task<IActionResult> Get(int coachWorkDayId, CancellationToken cancellationToken)
+        {
+            var request = new GetCoachWorkDay.Request(coachWorkDayId);
+
+            var getCoachWorkDayResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(getCoachWorkDayResponse);
+        }
+        [HttpPut]
+        [Route("/editCoachWorkDay")]
+        public async Task<IActionResult> Edit(int coachWorkDayId, CancellationToken cancellationToken)
+        {
+            var request = new EditCoachWorkDay.Request(coachWorkDayId);
+
+            var editCoachWorkDayResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(editCoachWorkDayResponse);
+        }
+        [HttpDelete]
+        [Route("/deleteCoachWorkDay")]
+        public async Task<IActionResult> Delete(int coachWorkDayId, CancellationToken cancellationToken)
+        {
+            var request = new DeleteCoachWorkDay.Request(coachWorkDayId);
+
+            var deleteCoachWorkDayResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(deleteCoachWorkDayResponse);
+        }
     }
 }

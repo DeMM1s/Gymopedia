@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gymopedia.Data.Migrations
 {
     [DbContext(typeof(LocalDbContext))]
-    [Migration("20220914130638_Init")]
-    partial class Init
+    [Migration("20220917173601_1")]
+    partial class _1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -32,13 +32,10 @@ namespace Gymopedia.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CoachId")
+                    b.Property<int>("OwnerCoachId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CoachId")
-                        .IsUnique();
 
                     b.ToTable("Calendar");
                 });
@@ -73,7 +70,7 @@ namespace Gymopedia.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ClientId")
+                    b.Property<int>("ClientOfThisCoachId")
                         .HasColumnType("integer");
 
                     b.Property<int?>("SessionId")
@@ -94,11 +91,16 @@ namespace Gymopedia.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int?>("CalendarId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CalendarId");
 
                     b.ToTable("Coaches");
                 });
@@ -114,7 +116,7 @@ namespace Gymopedia.Data.Migrations
                     b.Property<int?>("ClientId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CoachId")
+                    b.Property<int>("ThisCoachId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -156,7 +158,10 @@ namespace Gymopedia.Data.Migrations
                     b.Property<int?>("ClientId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("CoachWorkDayId")
+                    b.Property<int?>("CoachWorkDayId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CoachWorkDayIdOwner")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("From")
@@ -174,15 +179,6 @@ namespace Gymopedia.Data.Migrations
                     b.ToTable("Sessions");
                 });
 
-            modelBuilder.Entity("Gymopedia.Domain.Models.Calendar", b =>
-                {
-                    b.HasOne("Gymopedia.Domain.Models.Coach", null)
-                        .WithOne("Calendar")
-                        .HasForeignKey("Gymopedia.Domain.Models.Calendar", "CoachId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Gymopedia.Domain.Models.Client", b =>
                 {
                     b.HasOne("Gymopedia.Domain.Models.Coach", null)
@@ -195,6 +191,15 @@ namespace Gymopedia.Data.Migrations
                     b.HasOne("Gymopedia.Domain.Models.Session", null)
                         .WithMany("ClientIds")
                         .HasForeignKey("SessionId");
+                });
+
+            modelBuilder.Entity("Gymopedia.Domain.Models.Coach", b =>
+                {
+                    b.HasOne("Gymopedia.Domain.Models.Calendar", "Calendar")
+                        .WithMany()
+                        .HasForeignKey("CalendarId");
+
+                    b.Navigation("Calendar");
                 });
 
             modelBuilder.Entity("Gymopedia.Domain.Models.CoachIdsList", b =>
@@ -219,9 +224,7 @@ namespace Gymopedia.Data.Migrations
 
                     b.HasOne("Gymopedia.Domain.Models.CoachWorkDay", null)
                         .WithMany("Sessions")
-                        .HasForeignKey("CoachWorkDayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CoachWorkDayId");
                 });
 
             modelBuilder.Entity("Gymopedia.Domain.Models.Calendar", b =>
@@ -238,8 +241,6 @@ namespace Gymopedia.Data.Migrations
 
             modelBuilder.Entity("Gymopedia.Domain.Models.Coach", b =>
                 {
-                    b.Navigation("Calendar");
-
                     b.Navigation("Clients");
                 });
 

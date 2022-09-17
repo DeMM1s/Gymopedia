@@ -6,58 +6,39 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Gymopedia.Data.Migrations
 {
-    public partial class Init : Migration
+    public partial class _1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.CreateTable(
-                name: "Coaches",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Coaches", x => x.Id);
-                });
-
             migrationBuilder.CreateTable(
                 name: "Calendar",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CoachId = table.Column<int>(type: "integer", nullable: false)
+                    OwnerCoachId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Calendar", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Calendar_Coaches_CoachId",
-                        column: x => x.CoachId,
-                        principalTable: "Coaches",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Clients",
+                name: "Coaches",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    CoachId = table.Column<int>(type: "integer", nullable: true)
+                    CalendarId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Clients", x => x.Id);
+                    table.PrimaryKey("PK_Coaches", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Clients_Coaches_CoachId",
-                        column: x => x.CoachId,
-                        principalTable: "Coaches",
+                        name: "FK_Coaches_Calendar_CalendarId",
+                        column: x => x.CalendarId,
+                        principalTable: "Calendar",
                         principalColumn: "Id");
                 });
 
@@ -81,12 +62,31 @@ namespace Gymopedia.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Clients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    CoachId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Clients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Clients_Coaches_CoachId",
+                        column: x => x.CoachId,
+                        principalTable: "Coaches",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CoachIdsList",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CoachId = table.Column<int>(type: "integer", nullable: false),
+                    ThisCoachId = table.Column<int>(type: "integer", nullable: false),
                     ClientId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -107,8 +107,9 @@ namespace Gymopedia.Data.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     From = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Until = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    CoachWorkDayId = table.Column<int>(type: "integer", nullable: false),
-                    ClientId = table.Column<int>(type: "integer", nullable: true)
+                    CoachWorkDayIdOwner = table.Column<int>(type: "integer", nullable: false),
+                    ClientId = table.Column<int>(type: "integer", nullable: true),
+                    CoachWorkDayId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -122,8 +123,7 @@ namespace Gymopedia.Data.Migrations
                         name: "FK_Sessions_CoachWorkDays_CoachWorkDayId",
                         column: x => x.CoachWorkDayId,
                         principalTable: "CoachWorkDays",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -132,7 +132,7 @@ namespace Gymopedia.Data.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ClientId = table.Column<int>(type: "integer", nullable: false),
+                    ClientOfThisCoachId = table.Column<int>(type: "integer", nullable: false),
                     SessionId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -146,12 +146,6 @@ namespace Gymopedia.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Calendar_CoachId",
-                table: "Calendar",
-                column: "CoachId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ClientIdsList_SessionId",
                 table: "ClientIdsList",
                 column: "SessionId");
@@ -160,6 +154,11 @@ namespace Gymopedia.Data.Migrations
                 name: "IX_Clients_CoachId",
                 table: "Clients",
                 column: "CoachId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Coaches_CalendarId",
+                table: "Coaches",
+                column: "CalendarId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CoachIdsList_ClientId",
@@ -200,10 +199,10 @@ namespace Gymopedia.Data.Migrations
                 name: "CoachWorkDays");
 
             migrationBuilder.DropTable(
-                name: "Calendar");
+                name: "Coaches");
 
             migrationBuilder.DropTable(
-                name: "Coaches");
+                name: "Calendar");
         }
     }
 }

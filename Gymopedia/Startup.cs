@@ -52,9 +52,19 @@ namespace Gymopedia
         private IEnumerable<Assembly> GetMediatrAssemblies()
         {
             yield return Assembly.GetAssembly(typeof(CreateClient.Request))!;
+            yield return Assembly.GetAssembly(typeof(GetClient.Request))!;
+            yield return Assembly.GetAssembly(typeof(EditClient.Request))!;
+            yield return Assembly.GetAssembly(typeof(DeleteClient.Request))!;
+
             yield return Assembly.GetAssembly(typeof(CreateCoach.Request))!;
+            yield return Assembly.GetAssembly(typeof(GetCoach.Request))!;
+
             yield return Assembly.GetAssembly(typeof(CreateCoachWorkDay.Request))!;
+            yield return Assembly.GetAssembly(typeof(GetCoachWorkDay.Request))!;
+
             yield return Assembly.GetAssembly(typeof(CreateSession.Request))!;
+            yield return Assembly.GetAssembly(typeof(GetSession.Request))!;
+
         }
     }
 }
