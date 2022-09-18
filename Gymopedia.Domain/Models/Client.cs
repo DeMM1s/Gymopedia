@@ -3,7 +3,7 @@
     public class Client
     {
         public int Id { get; init; }
-        public string Name { get; init; }
+        public string Name { get; set; }
 
         public ICollection<Coach> CoachIds { get; init; } = new List<Coach>();
         public ICollection<Session> TrainingSessions { get; init; } = new List<Session>();

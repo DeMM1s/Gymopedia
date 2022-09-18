@@ -26,12 +26,12 @@ namespace Gymopedia.Data.Repository
             Client? client = await Context.Clients.SingleOrDefaultAsync(o => o.Id == clientId, cancellationToken);
             if (client == null)
             {
-                //throw new InvalidOperationException("Клиент с данным id не найден");
                 return null;
             }
             Context.Clients.Remove(client);
             Context.SaveChanges();
             return client;
         }
+
     }
 }

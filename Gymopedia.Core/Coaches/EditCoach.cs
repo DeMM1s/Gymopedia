@@ -9,7 +9,7 @@ namespace Gymopedia.Core.Coaches
 {
     public class EditCoach
     {
-        public record Request(int ID) : IRequest<Response>;
+        public record Request(Coach Coach) : IRequest<Response>;
         public record Response(Coach? Coach, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>
@@ -21,11 +21,16 @@ namespace Gymopedia.Core.Coaches
             }
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var coach = await _coachRepository.Get(request.ID, cancellationToken);
+                var coach = await _coachRepository.Get(request.Coach.Id, cancellationToken);
                 if (coach == null)
                 {
                     return new Response(null, Constants.ErrorMessage.Coach.CoachNotFoundError);
                 }
+
+                coach.Name = request.Coach.Name;
+
+                await _coachRepository.Commit(cancellationToken);
+
                 return new Response(coach);
             }
         }
