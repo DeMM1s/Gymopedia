@@ -42,9 +42,9 @@ namespace Gymopedia.Controllers
         }
         [HttpPut]
         [Route("/editClient")]
-        public async Task<IActionResult> Edit(int clientId, CancellationToken cancellationToken)
+        public async Task<IActionResult> Edit(int clientId, string name , CancellationToken cancellationToken)
         {
-            var request = new EditClient.Request(clientId);
+            var request = new EditClient.Request(new Domain.Models.Client { Id = clientId, Name = name});
 
             var getClientResponse = await _mediator.Send(request, cancellationToken);
 

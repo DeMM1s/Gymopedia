@@ -36,16 +36,6 @@ namespace Gymopedia.Data
                 }
             }
         }
-        //public void dispose()
-        //{
-        //    throw new notimplementedexception();
-        //}
-
-        //public valuetask disposeasync()
-        //{
-        //    Dispose(true);
-        //    GC.SuppressFinalize(this);
-        //}
 
         #endregion
     }

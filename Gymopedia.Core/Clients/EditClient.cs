@@ -9,7 +9,7 @@ namespace Gymopedia.Core.Clients
 {
     public class EditClient
     {
-        public record Request(int ID) : IRequest<Response>;
+        public record Request(Client Client) : IRequest<Response>;
         public record Response(Client? Client, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>
@@ -21,11 +21,16 @@ namespace Gymopedia.Core.Clients
             }
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var client = await _clientRepository.Get(request.ID, cancellationToken);
+                var client = await _clientRepository.Get(request.Client.Id, cancellationToken);
                 if (client == null)
                 {
                     return new Response(null, Constants.ErrorMessage.Client.ClientNotFoundError);
                 }
+
+                client.Name = request.Client.Name;
+
+                await _clientRepository.Commit(cancellationToken);
+
                 return new Response(client);
             }
         }
