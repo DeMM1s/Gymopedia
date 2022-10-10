@@ -28,9 +28,7 @@ namespace Gymopedia.Core.Coaches
                 return new Response(new CoachDto
                 {
                     Name = coach.Name,
-                    Id = coach.Id,
-                    Clients = coach.Clients,
-                    Calendar = coach.Calendar
+                    Id = coach.Id
                 });
             }
         }
