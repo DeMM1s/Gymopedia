@@ -8,7 +8,6 @@ namespace Gymopedia.Domain.Models
         public DateTime From { get; init; }
         public DateTime Until { get; init; }
         public int CoachWorkDayIdOwner { get; init; }
-        public ICollection<Client> Clients { get; init; } = new List<Client>();
 
         private int _maxClient;
         public Session()

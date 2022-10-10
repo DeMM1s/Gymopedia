@@ -6,10 +6,6 @@
 
         public string Name { get; set; }
 
-        public ICollection<Client> Clients { get; init; } = new List<Client>();
-
-        public Calendar? Calendar { get; init; }
-
         public Coach() { }
 
         public Coach(string name)

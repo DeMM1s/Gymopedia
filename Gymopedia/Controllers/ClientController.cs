@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Gymopedia.Core.Models;
 using Gymopedia.Core.Clients;
+using Gymopedia.Core.Coaches;
+using Gymopedia.Core.Sessions;
+using Gymopedia.Core.ClientToCoachs;
+using Gymopedia.Core.ClientToSessions;
 using Gymopedia.Inputs;
 using MediatR;
 

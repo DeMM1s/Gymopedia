@@ -29,8 +29,6 @@ namespace Gymopedia.Core.Clients
                 {
                     Name = client.Name,
                     Id = client.Id,
-                    //CoachIds = client.CoachIds,
-                    TrainingSessions = client.TrainingSessions,
                 });
             }
         }

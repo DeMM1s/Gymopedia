@@ -22,6 +22,8 @@ namespace Gymopedia.Extensions
             services.AddTransient<ICoachRepository, CoachRepository>();
             services.AddTransient<ICoachWorkDayRepository, CoachWorkDayRepository>();
             services.AddTransient<ISessionRepository, SessionRepository>();
+            services.AddTransient<IClientToSessionRepository, ClientToSessionRepository>();
+            services.AddTransient<IClientToCoachRepository, ClientToCoachRepository>();
 
             //services.AddScoped(typeof(IClientRepository), typeof(ClientRepository));
 
