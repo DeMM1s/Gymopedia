@@ -35,7 +35,7 @@ namespace Gymopedia
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-            services.AddBotf("5493236640:AAHJ9TKD1BQ2rbYMfQtnaxiwVHpsE9GYlrE");
+            services.AddBotf("");
         }
 
         public void Configure(IApplicationBuilder app)
