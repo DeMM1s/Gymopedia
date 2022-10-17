@@ -3,17 +3,18 @@
 using System.Reflection;
 using Gymopedia.Core.Clients;
 using Gymopedia.Core.Coaches;
-using Gymopedia.Core.CoachWorkDays;
 using Gymopedia.Core.Sessions;
 using Gymopedia.Extensions;
 using Gymopedia.Core.ClientToCoachs;
 using Gymopedia.Core.ClientToSessions;
+using Telegram.Bot;
+using Deployf.Botf;
 
 namespace Gymopedia
 {
     public class Startup
     {
-
+        
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _env;
 
@@ -22,7 +23,7 @@ namespace Gymopedia
             _configuration = configuration;
             _env = env;
         }
-
+        
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -34,7 +35,7 @@ namespace Gymopedia
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-
+            services.AddBotf("5493236640:AAHJ9TKD1BQ2rbYMfQtnaxiwVHpsE9GYlrE");
         }
 
         public void Configure(IApplicationBuilder app)
@@ -44,11 +45,12 @@ namespace Gymopedia
             app.UseRouting();
 
             app.UseAuthorization();
-
+            
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
             });
+            app.UseBotf();
         }
 
         private IEnumerable<Assembly> GetMediatrAssemblies()
@@ -61,15 +63,16 @@ namespace Gymopedia
             yield return Assembly.GetAssembly(typeof(CreateCoach.Request))!;
             yield return Assembly.GetAssembly(typeof(GetCoach.Request))!;
 
-            yield return Assembly.GetAssembly(typeof(CreateCoachWorkDay.Request))!;
-            yield return Assembly.GetAssembly(typeof(GetCoachWorkDay.Request))!;
-
             yield return Assembly.GetAssembly(typeof(CreateSession.Request))!;
             yield return Assembly.GetAssembly(typeof(GetSession.Request))!;
 
 
             yield return Assembly.GetAssembly(typeof(SubscribeToSession.Request))!;
+            yield return Assembly.GetAssembly(typeof(GetClientToSession.Request))!;
+
+
             yield return Assembly.GetAssembly(typeof(SubscribeToCoach.Request))!;
+            yield return Assembly.GetAssembly(typeof(GetClientToCoach.Request))!;
 
         }
     }
