@@ -13,6 +13,7 @@ namespace Gymopedia.Core.Clients
         public class Handler : IRequestHandler<Request, Response>
         {
             private readonly IClientRepository _clientRepository;
+
             public Handler(IClientRepository clientRepository)
             {
                 _clientRepository = clientRepository;

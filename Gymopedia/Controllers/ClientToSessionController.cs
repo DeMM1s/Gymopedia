@@ -10,7 +10,7 @@ namespace Gymopedia.Controllers
 {
     [Route("/ClientToSession")]
     [ApiController]
-    public class ClientToSessionController
+    public class ClientToSessionController : Controller
     {
         private readonly IMediator _mediator;
 
@@ -26,6 +26,26 @@ namespace Gymopedia.Controllers
             var request = new SubscribeToSession.Request(clientId, sessionId);
             var subscribeToSessionResponse = await _mediator.Send(request, cancellationToken);
             return new ClientToSessionDTO { ClientId = clientId, SessionId = sessionId };
+        }
+        [HttpGet]
+        [Route("/getClientToSession")]
+        public async Task<IActionResult> Get(int clientId, int sessionId, CancellationToken cancellationToken)
+        {
+            var request = new GetClientToSession.Request(clientId, sessionId);
+
+            var getClientToSessionResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(getClientToSessionResponse);
+        }
+        [HttpDelete]
+        [Route("/deleteClientToSession")]
+        public async Task<IActionResult> Delete(int clientId, int sessionId, CancellationToken cancellationToken)
+        {
+            var request = new DeleteClientToSession.Request(clientId, sessionId);
+
+            var deleteClientToSessionResponse = await _mediator.Send(request, cancellationToken);
+
+            return Ok(deleteClientToSessionResponse);
         }
     }
 }

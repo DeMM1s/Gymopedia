@@ -1,3 +1,4 @@
+using Deployf.Botf;
 namespace Gymopedia
 {
     public static class Program
@@ -7,6 +8,7 @@ namespace Gymopedia
             await CreateHostBuilder(args)
                 .Build()
                 .RunAsync();
+
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args)
