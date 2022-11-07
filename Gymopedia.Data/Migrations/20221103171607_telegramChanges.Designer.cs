@@ -3,6 +3,7 @@ using System;
 using Gymopedia.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,10 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gymopedia.Data.Migrations
 {
     [DbContext(typeof(LocalDbContext))]
-    partial class LocalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221103171607_telegramChanges")]
+    partial class telegramChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,11 +52,11 @@ namespace Gymopedia.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("ClientId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
 
-                    b.Property<long>("CoachId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("CoachId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -69,11 +71,11 @@ namespace Gymopedia.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("ClientId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("ClientId")
+                        .HasColumnType("integer");
 
-                    b.Property<long>("SessionId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("SessionId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 

@@ -3,6 +3,6 @@
     public class CreateClientInput
     {
         public string Name { get; set; }
-        public int CoachId { get; set; }
+        public long TelegramChatId { get; init; }
     }
 }

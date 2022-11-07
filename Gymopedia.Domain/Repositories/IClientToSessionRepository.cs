@@ -6,7 +6,7 @@ namespace Gymopedia.Domain.Repositories
     public interface IClientToSessionRepository: IRepository
     {
         void Add(ClientToSession ClientToSession);
-        Task<ClientToSession?> Get(int clientId, int sessionId, CancellationToken cancellationToken);
-        Task<ClientToSession?> Delete(int clientId, int sessionId, CancellationToken cancellationToken);
+        Task<ClientToSession?> Get(long clientId, long sessionId, CancellationToken cancellationToken);
+        Task<ClientToSession?> Delete(long clientId, long sessionId, CancellationToken cancellationToken);
     }
 }

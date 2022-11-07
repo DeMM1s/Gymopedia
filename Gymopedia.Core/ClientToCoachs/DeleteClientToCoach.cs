@@ -8,7 +8,7 @@ namespace Gymopedia.Core.ClientToCoachs
 {
     public class DeleteClientToCoach
     {
-        public record Request(int clientId, int coachId) : IRequest<Response>;
+        public record Request(long clientId, long coachId) : IRequest<Response>;
         public record Response(ClientToCoach? ClientToCoach, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>

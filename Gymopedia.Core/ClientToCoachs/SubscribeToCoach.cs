@@ -8,7 +8,7 @@ namespace Gymopedia.Core.ClientToCoachs
 {
     public class SubscribeToCoach
     {
-        public record Request(int clientId, int coachId) : IRequest<Response>;
+        public record Request(long clientId, long coachId) : IRequest<Response>;
         public record Response(ClientToCoach? ClientToCoach, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>
@@ -21,7 +21,7 @@ namespace Gymopedia.Core.ClientToCoachs
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 var clientToCoach = new ClientToCoach { ClientId = request.clientId, CoachId = request.coachId };
-
+                _clientToCoachRepository.Add(clientToCoach);
                 await _clientToCoachRepository.Commit(cancellationToken);
 
                 return new Response(clientToCoach);

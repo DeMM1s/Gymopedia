@@ -7,12 +7,13 @@ using Gymopedia.Core.ClientToCoachs;
 using Gymopedia.Core.ClientToSessions;
 using Gymopedia.Inputs;
 using MediatR;
+using Deployf.Botf;
+using Gymopedia.Domain.Models;
 
 namespace Gymopedia.Controllers
 {
-    [Route("/ClientToCoach")]
-    [ApiController]
-    public class ClientToCoachController : Controller
+    
+    public class ClientToCoachController : BotController
     {
         private readonly IMediator _mediator;
 
@@ -21,6 +22,9 @@ namespace Gymopedia.Controllers
             _mediator = mediator;
         }
 
+
+
+        #region clientToCoach
         [HttpPost]
         [Route("/subscribeToCoach")]
         public async Task<ClientToCoachDTO> SubscribeToCoach(int clientId, int coachId, CancellationToken cancellationToken)
@@ -32,23 +36,22 @@ namespace Gymopedia.Controllers
         }
         [HttpGet]
         [Route("/getClientToCoach")]
-        public async Task<IActionResult> Get(int clientId, int coachId, CancellationToken cancellationToken)
+        public async Task Get(int clientId, int coachId, CancellationToken cancellationToken)
         {
             var request = new GetClientToCoach.Request(clientId, coachId);
 
             var getClientToCoachResponse = await _mediator.Send(request, cancellationToken);
 
-            return Ok(getClientToCoachResponse);
         }
         [HttpDelete]
         [Route("/deleteClientToCoach")]
-        public async Task<IActionResult> Delete(int clientId, int coachId, CancellationToken cancellationToken)
+        public async Task Delete(int clientId, int coachId, CancellationToken cancellationToken)
         {
             var request = new DeleteClientToCoach.Request(clientId, coachId);
 
             var deleteClientToCoachResponse = await _mediator.Send(request, cancellationToken);
 
-            return Ok(deleteClientToCoachResponse);
         }
+        #endregion
     }
 }

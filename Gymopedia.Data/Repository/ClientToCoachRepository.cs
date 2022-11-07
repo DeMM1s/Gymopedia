@@ -16,12 +16,12 @@ namespace Gymopedia.Data.Repository
             Context.ClientToCoach.Add(ClientToCoach);
         }
 
-        public async Task<ClientToCoach?> Get(int clientId, CancellationToken cancellationToken)
+        public async Task<ClientToCoach?> Get(long clientId, CancellationToken cancellationToken)
         {
             return await Context.ClientToCoach.FirstOrDefaultAsync(o => o.Id == clientId, cancellationToken);
         }
 
-        public async Task<ClientToCoach?> Delete(int clientId, int coachId, CancellationToken cancellationToken)
+        public async Task<ClientToCoach?> Delete(long clientId, long coachId, CancellationToken cancellationToken)
         {
             ClientToCoach? ClientToCoach = await Context.ClientToCoach.SingleOrDefaultAsync(o => o.Id == clientId, cancellationToken);
             if (ClientToCoach == null)

@@ -15,14 +15,19 @@ namespace Gymopedia.Data.Repository
             Context.Coaches.Add(coach);
         }
 
-        public async Task<Coach?> Get(int coachId, CancellationToken cancellationToken)
+        public async Task<Coach?> Get(long coachId, CancellationToken cancellationToken)
         {
-            return await Context.Coaches.SingleOrDefaultAsync(o => o.Id == coachId, cancellationToken);
+            return await Context.Coaches.FirstOrDefaultAsync(o => o.ChatId == coachId, cancellationToken);
+        }
+
+        public async Task<Coach?> GetFromName(string name, CancellationToken cancellationToken)
+        {
+            return await Context.Coaches.FirstOrDefaultAsync(o => o.Name == name, cancellationToken);
         }
 
         public async Task<Coach?> Delete(int coachId, CancellationToken cancellationToken)
         {
-            Coach? coach = await Context.Coaches.SingleOrDefaultAsync(o => o.Id == coachId, cancellationToken);
+            Coach? coach = await Context.Coaches.SingleOrDefaultAsync(o => o.ChatId == coachId, cancellationToken);
             if (coach == null)
             {
                 //throw new InvalidOperationException("Тренер с данным id не найден");
