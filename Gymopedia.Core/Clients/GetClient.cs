@@ -8,7 +8,7 @@ namespace Gymopedia.Core.Clients
 {
     public class GetClient
     {
-        public record Request(int ID) : IRequest<Response>;
+        public record Request(long ChatId) : IRequest<Response>;
         public record Response(Client? Client, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>
@@ -20,7 +20,7 @@ namespace Gymopedia.Core.Clients
             }
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var client = await _clientRepository.Get(request.ID, cancellationToken);
+                var client = await _clientRepository.Get(request.ChatId, cancellationToken);
                 if (client == null)
                 {
                     return new Response(null, Constants.ErrorMessage.Client.ClientNotFoundError);

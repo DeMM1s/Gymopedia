@@ -3,12 +3,13 @@ using Gymopedia.Core.Models;
 using Gymopedia.Inputs;
 using Gymopedia.Core.Coaches;
 using MediatR;
+using Deployf.Botf;
+using Gymopedia.Domain.Models;
 
 namespace Gymopedia.Controllers
 {
-    [Route("/coach")]
-    [ApiController]
-    public class CoachController : Controller
+    //[Route("/coach")]
+    public class CoachController : BotController
     {
         private readonly IMediator _mediator;
 
@@ -17,46 +18,56 @@ namespace Gymopedia.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("/createCoach")]
-        public async Task<CoachDto> CreateCoach(CreateCoachInput input, CancellationToken cancellationToken)
+        [Action("/registrationCoach")]
+        public async Task registrationCoach()
         {
-            var request = new CreateCoach.Request(input.Name);
-            var createCoachResponse = await _mediator.Send(request, cancellationToken);
-
-            return new CoachDto
+            var chatId = Context.UserId();
+            var coach = await Get(chatId);
+            if (coach == null)
             {
-                Name = createCoachResponse.Coach.Name
-            };
+                var Name = Context.GetUsername();
+                coach = await Create (Name, chatId);
+            }
+            PushL(coach.Name);
+            PushL(coach.Id.ToString());
+            PushL(coach.ChatId.ToString());
+
+            //RowButton("Найти тренера", Q(FindCoach));
         }
-        [HttpGet]
-        [Route("/getCoach")]
-        public async Task<IActionResult> Get(int coachId, CancellationToken cancellationToken)
+
+        [Action]
+        public async Task<Coach> Create(string Name, long chatId)
         {
-            var request = new GetCoach.Request(coachId);
-
-            var getCoachResponse = await _mediator.Send(request, cancellationToken);
-
-            return Ok(getCoachResponse);
+            var request = new CreateCoach.Request(Name, chatId);
+            var createCoachResponse = await _mediator.Send(request);
+            return createCoachResponse.Coach;
         }
-        [HttpPut]
-        [Route("/editCoach")]
-        public async Task<IActionResult> Edit(int coachId, string name, CancellationToken cancellationToken)
-        {
-            var request = new EditCoach.Request(new Domain.Models.Coach { Id = coachId, Name = name});
 
-            var editCoachResponse = await _mediator.Send(request, cancellationToken);
-
-            return Ok(editCoachResponse);
+        [Action]
+        public async Task<Coach> Get(long chatId)
+        { 
+            var request = new GetCoach.Request(chatId);
+            var getCoachResponse = await _mediator.Send(request);
+            return getCoachResponse.Coach;
         }
-        [HttpDelete]
-        [Route("/deleteCoach")]
-        public async Task<IActionResult> Delete(int coachId, CancellationToken cancellationToken)
+
+
+        [Action]
+        public async Task Edit()
         {
-            var request = new DeleteCoach.Request(coachId);
+            var request = new EditCoach.Request(new Domain.Models.Coach { Id = 0, Name = ""});
 
-            var deleteCoachResponse = await _mediator.Send(request, cancellationToken);
+            var editCoachResponse = await _mediator.Send(request);
 
-            return Ok(deleteCoachResponse);
+        }
+
+        [Action]
+        public async Task Delete()
+        {
+            var request = new DeleteCoach.Request(0);
+
+            var deleteCoachResponse = await _mediator.Send(request);
+
         }
     }
 }

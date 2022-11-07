@@ -7,9 +7,9 @@ namespace Gymopedia.Core.Clients
 {
     public class CreateClient
     {
-        public record Request(string Name, int CoachId) : IRequest<Response>;
+        public record Request(string Name, long ChatId) : IRequest<Response>;
 
-        public record Response(ClientDto Client);
+        public record Response(Client Client);
         public class Handler : IRequestHandler<Request, Response>
         {
             private readonly IClientRepository _clientRepository;
@@ -21,18 +21,12 @@ namespace Gymopedia.Core.Clients
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 var client = new Client(
-                    request.Name);
-
-                //client.CoachIds.Add(request.CoachId);
+                    request.Name, request.ChatId);
 
                 _clientRepository.Add(client);
                 await _clientRepository.Commit(cancellationToken);
 
-                return new Response(new ClientDto
-                {
-                    Name = request.Name,
-                    CoachIds = request.CoachId
-                });
+                return new Response(client) ;
             }
         }
     }

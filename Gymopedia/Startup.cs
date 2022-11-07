@@ -35,21 +35,21 @@ namespace Gymopedia
 
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
-            services.AddBotf("");
+            services.AddBotf("5493236640:AAHJ9TKD1BQ2rbYMfQtnaxiwVHpsE9GYlrE");
         }
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseSwagger().UseSwaggerUI();
+            //app.UseSwagger().UseSwaggerUI();
 
             app.UseRouting();
 
             app.UseAuthorization();
-            
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+
+            //app.UseEndpoints(endpoints =>
+            //{
+            //    endpoints.MapControllers();
+            //});
             app.UseBotf();
         }
 
