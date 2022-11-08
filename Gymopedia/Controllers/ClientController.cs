@@ -51,19 +51,69 @@ namespace Gymopedia.Controllers
         public async Task ClientMenu()
         {
             PushL("Меню");
+            RowButton("Посмотреть информацию обо мне",Q(AboutMe));
             RowButton("Найти тренера", Q(FindCoach));
-            RowButton("Мои тренера");
-            RowButton("Мои записи");
-            RowButton("Когда тренировка");
+            RowButton("Мои тренера", Q(ListOfCoaches));
+            RowButton("Мои записи", Q(ListOfSessions));
+            RowButton("Ближайшая тренировка", Q(NearestSession));
             Send();
         }
 
-        
+        [Action]
+        public async Task AboutMe()
+        {
+            var chatId = Context.UserId();
+            var client = await Get(chatId);
+
+            PushL($"Ваше имя: {client.Name}");
+            RowButton("Вернуться в меню", Q(ClientMenu));
+        }
+        [Action]
+        public async Task ListOfCoaches()
+        {
+            var chatId = Context.UserId();
+            var request = new GetAllClientToCoach.Request(chatId);
+            var ListResponse = await _mediator.Send(request);
+            var list = ListResponse.ClientToCoachList;
+            PushL("Вы подписаны на:");
+            foreach (var item in list)
+            {
+                var requestCoach = new GetCoach.Request(item.CoachId);
+                var getCoachResponse = await _mediator.Send(requestCoach);
+                var coach = getCoachResponse.Coach;
+                RowButton(coach.Name, Q(CoachMenu,coach));
+            }
+            RowButton("Вернуться в меню", Q(ClientMenu));
+        }
+
+        [Action]
+        public async Task CoachMenu(Coach coach)
+        {
+            PushL($"Тренер: {coach.Name}");
+            RowButton("Посмореть информацию", Q(ClientMenu));
+            RowButton("Сессии", Q(ClientMenu));
+            RowButton("Отписаться", Q(Unsubscribe, coach));
+            RowButton("Вернуться в меню", Q(ClientMenu));
+        }
+
+        [Action]
+        public async Task ListOfSessions()
+        {
+            
+        }
+        [Action]
+        public async Task NearestSession()
+        {
+
+        }
+
+
         [Action("/GetFromName")]
         public async Task FindCoach()
         {
             PushL("Введите имя теренера");
             Fill_Comment(await GetAState<FillState>());
+            await Send();
         }
 
         struct FillState
@@ -97,14 +147,34 @@ namespace Gymopedia.Controllers
 
                 RowButton("подписаться", Q(Subscribe, coach) );
             }
+            else
+            {
+                PushL("Тренер не найден");
+                RowButton("Попробовать снова", Q(FindCoach));
+                RowButton("Вернуться в меню", Q(ClientMenu));
+            }
         }
+
+        [Action]
+        public async ValueTask Unsubscribe(Coach coach)
+        {
+            var chatId = Context.UserId();
+            await DeleteClientToCoach(chatId, coach.ChatId);
+            PushL($"Вы отписались от {coach.Name}");
+            RowButton("Отмена", Q(Subscribe, coach));
+            RowButton("Вернуться в меню", Q(ClientMenu));
+            await Send();
+        }
+
         [Action]
         public async ValueTask Subscribe(Coach coach)
         {
             var chatId = Context.UserId();
             var subscribeToCoach = await SubscribeToCoach(chatId, coach.ChatId);
-            PushL("вы подписались");
+            PushL($"Вы подписались на {coach.Name}");
             PushL(subscribeToCoach.Id.ToString());
+            RowButton("Вернуться в меню", Q(ClientMenu));
+            await Send();
         }
 
         [State]
@@ -137,11 +207,11 @@ namespace Gymopedia.Controllers
         }
         [HttpDelete]
         [Route("/deleteClientToCoach")]
-        public async Task Delete(long clientId, long coachId, CancellationToken cancellationToken)
+        public async Task DeleteClientToCoach(long clientId, long coachId)
         {
             var request = new DeleteClientToCoach.Request(clientId, coachId);
 
-            var deleteClientToCoachResponse = await _mediator.Send(request, cancellationToken);
+            var deleteClientToCoachResponse = await _mediator.Send(request);
 
         }
         #endregion

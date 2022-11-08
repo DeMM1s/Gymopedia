@@ -27,14 +27,63 @@ namespace Gymopedia.Controllers
             {
                 var Name = Context.GetUsername();
                 coach = await Create (Name, chatId);
+                PushL("Вы успешно зарегестрированы");
             }
-            PushL(coach.Name);
-            PushL(coach.Id.ToString());
-            PushL(coach.ChatId.ToString());
-
-            //RowButton("Найти тренера", Q(FindCoach));
+            else
+            {
+                PushL("Мы вас помним");
+            }
+            PushL($"Здравсвуйте, {coach.Name}");
+            await Send();
+            CoachMenu();
         }
 
+        public async Task CoachMenu()
+        {
+            PushL("Меню");
+            RowButton("Посмотреть информацию обо мне", Q(AboutMe));
+            RowButton("Мои сессии",Q(MySessions));
+            RowButton("Ближайший клиент",Q(NearestClient));
+            Send();
+        }
+
+        [Action]
+        public async Task AboutMe()
+        {
+            var chatId = Context.UserId();
+            var coach = await Get(chatId);
+
+            PushL($"Ваше имя: {coach.Name}");
+            RowButton("Вернуться в меню", Q(CoachMenu));
+        }
+        [Action]
+        public async Task MySessions()
+        {
+            PushL("Мои сессии");
+            RowButton("Создать", Q(SessionController));
+            RowButton("Посмотреть список", Q(ListOfSessions));
+            RowButton("Вернуться в меню", Q(CoachMenu));
+        }
+        [Action]
+        public async Task ListOfSessions()
+        {
+
+        }
+
+        [Action]
+        public async Task SessionController()
+        {
+
+        }
+
+        [Action]
+        public async Task NearestClient()
+        {
+
+        }
+
+
+        #region REST
         [Action]
         public async Task<Coach> Create(string Name, long chatId)
         {
@@ -69,5 +118,6 @@ namespace Gymopedia.Controllers
             var deleteCoachResponse = await _mediator.Send(request);
 
         }
+        #endregion
     }
 }
