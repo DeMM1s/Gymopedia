@@ -27,12 +27,8 @@ namespace Gymopedia.Data.Repository
 
         public async Task<Coach?> Delete(int coachId, CancellationToken cancellationToken)
         {
-            Coach? coach = await Context.Coaches.SingleOrDefaultAsync(o => o.ChatId == coachId, cancellationToken);
-            if (coach == null)
-            {
-                //throw new InvalidOperationException("Тренер с данным id не найден");
-                return null;
-            }
+            Coach? coach = await Context.Coaches.FirstOrDefaultAsync(o => o.ChatId == coachId, cancellationToken);
+
             Context.Coaches.Remove(coach);
             Context.SaveChanges();
             return coach;

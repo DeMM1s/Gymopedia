@@ -8,7 +8,7 @@ namespace Gymopedia.Core.ClientToSessions
 {
     public class SubscribeToSession
     {
-        public record Request(int clientId, int sessionId) : IRequest<Response>;
+        public record Request(long clientId, int sessionId) : IRequest<Response>;
         public record Response(ClientToSession? ClientToSession, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>

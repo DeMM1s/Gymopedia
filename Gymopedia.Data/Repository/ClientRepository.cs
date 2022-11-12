@@ -23,7 +23,7 @@ namespace Gymopedia.Data.Repository
 
         public async Task<Client?> Delete(long clientId, CancellationToken cancellationToken)
         {
-            Client? client = await Context.Clients.SingleOrDefaultAsync(o => o.ChatId == clientId, cancellationToken);
+            Client? client = await Context.Clients.FirstOrDefaultAsync(o => o.ChatId == clientId, cancellationToken);
             if (client == null)
             {
                 return null;

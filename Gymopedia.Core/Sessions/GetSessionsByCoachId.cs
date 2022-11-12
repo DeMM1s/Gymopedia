@@ -1,15 +1,16 @@
 ﻿using Gymopedia.Core.Models;
 using Gymopedia.Domain.Repositories;
 using Gymopedia.Domain.Models;
+using Gymopedia.Infrastructure.Constants;
 using MediatR;
 
 namespace Gymopedia.Core.Sessions
 {
-    public class CreateSession
+    public class GetSessionsByCoachId
     {
-        public record Request(DateTime From, long CoachId) : IRequest<Response>;
+        public record Request(long CoachId) : IRequest<Response>;
+        public record Response(List<Session>? SessionList, string? Error = null);
 
-        public record Response(SessionDto Session);
         public class Handler : IRequestHandler<Request, Response>
         {
             private readonly ISessionRepository _sessionRepository;
@@ -19,15 +20,9 @@ namespace Gymopedia.Core.Sessions
             }
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var session = new Session(request.From, request.CoachId);
+                var list = await _sessionRepository.GetAllByCoachId(request.CoachId, cancellationToken);
 
-                _sessionRepository.Add(session);
-                await _sessionRepository.Commit(cancellationToken);
-
-                return new Response(new SessionDto
-                {
-                    From = request.From
-                });
+                return new Response(list);
             }
         }
     }

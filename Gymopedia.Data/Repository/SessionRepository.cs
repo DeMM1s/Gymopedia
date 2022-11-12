@@ -17,12 +17,29 @@ namespace Gymopedia.Data.Repository
         }
         public async Task<Session?> Get(int sessionId, CancellationToken cancellationToken)
         {
-            return await Context.Sessions.SingleOrDefaultAsync(o => o.Id == sessionId, cancellationToken);
+            return await Context.Sessions.FirstOrDefaultAsync(o => o.Id == sessionId, cancellationToken);
+        }
+
+        public async Task<List<Session>> GetAllByCoachId(long coachId, CancellationToken cancellationToken)
+        {
+            var data = Context.Sessions.Where(o => o.CoachId == coachId);
+            var List = new List<Session>();
+            foreach (var item in data)
+            {
+                List.Add(new Session
+                {
+                    currentNumberOfClients = item.currentNumberOfClients,
+                    Id = item.Id,
+                    CoachId = item.CoachId,
+                    From = item.From
+                }) ;
+            }
+            return List;
         }
 
         public async Task<Session?> Delete(int sessionId, CancellationToken cancellationToken)
         {
-            Session? session = await Context.Sessions.SingleOrDefaultAsync(o => o.Id == sessionId, cancellationToken);
+            Session? session = await Context.Sessions.FirstOrDefaultAsync(o => o.Id == sessionId, cancellationToken);
             if (session == null)
             {
                 //throw new InvalidOperationException("Клиент с данным id не найден");
