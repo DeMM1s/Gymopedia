@@ -8,21 +8,17 @@ namespace Gymopedia.Domain.Models
         public DateTime From { get; init; }
         public DateTime Until { get; init; }
         public int CoachWorkDayIdOwner { get; init; }
-
+        public long CoachId { get; init; }
+        public int currentNumberOfClients { get; init; }
         private int _maxClient;
-        public Session()
-        {
 
-        }
-        public Session(DateTime from, DateTime until, int maxClient, int coachWorkDayId)
+        public Session()        {        }
+
+        public Session(DateTime from, long coachId)
         {
             From = from;
-            Until = until;
-            _maxClient = maxClient;
-            CoachWorkDayIdOwner = coachWorkDayId;
+            CoachId = coachId;
         }
-
-
         public void SetMaxClient(int MaxClient)
         {
             if (MaxClient < 1 || MaxClient > 30)

@@ -54,7 +54,7 @@ namespace Gymopedia.Controllers
             RowButton("Посмотреть информацию обо мне",Q(AboutMe));
             RowButton("Найти тренера", Q(FindCoach));
             RowButton("Мои тренера", Q(ListOfCoaches));
-            RowButton("Мои записи", Q(ListOfSessions));
+            RowButton("Мои записи", Q(MyListOfSessions));
             RowButton("Ближайшая тренировка", Q(NearestSession));
             Send();
         }
@@ -75,32 +75,132 @@ namespace Gymopedia.Controllers
             var request = new GetAllClientToCoach.Request(chatId);
             var ListResponse = await _mediator.Send(request);
             var list = ListResponse.ClientToCoachList;
-            PushL("Вы подписаны на:");
-            foreach (var item in list)
+            if (!list.Any())
             {
-                var requestCoach = new GetCoach.Request(item.CoachId);
-                var getCoachResponse = await _mediator.Send(requestCoach);
-                var coach = getCoachResponse.Coach;
-                RowButton(coach.Name, Q(CoachMenu,coach));
+                PushL("Вы ни на кого не подписаны");
+                RowButton("Найти тренера", Q(FindCoach));
+                RowButton("Вернуться в меню", Q(ClientMenu));
             }
-            RowButton("Вернуться в меню", Q(ClientMenu));
+            else
+            {
+                PushL("Вы подписаны на:");
+                foreach (var item in list)
+                {
+                    var requestCoach = new GetCoach.Request(item.CoachId);
+                    var getCoachResponse = await _mediator.Send(requestCoach);
+                    var coach = getCoachResponse.Coach;
+                    RowButton(coach.Name, Q(CoachMenu, coach));
+                }
+                RowButton("Вернуться в меню", Q(ClientMenu));
+            }
         }
 
         [Action]
         public async Task CoachMenu(Coach coach)
         {
             PushL($"Тренер: {coach.Name}");
-            RowButton("Посмореть информацию", Q(ClientMenu));
-            RowButton("Сессии", Q(ClientMenu));
+            RowButton("Посмореть информацию", Q(AboutCoach, coach));
+            RowButton("Сессии", Q(CoachListOfSessions, coach));
             RowButton("Отписаться", Q(Unsubscribe, coach));
             RowButton("Вернуться в меню", Q(ClientMenu));
         }
 
         [Action]
-        public async Task ListOfSessions()
+        public async Task AboutCoach(Coach coach)
         {
-            
+            PushL($"Имя: {coach.Name}");
+
+
+            RowButton("Назад", Q(CoachMenu, coach));
+            RowButton("Вернуться в меню", Q(ClientMenu));
         }
+
+        [Action]
+        public async Task MyListOfSessions()
+        {
+            var chatId = Context.UserId();
+            var request = new GetAllClientToSession.Request(chatId);
+            var ListResponse = await _mediator.Send(request);
+            var list = ListResponse.ClientToSessionList;
+            if (!list.Any())
+            {
+                PushL("У вас нет активных сессий");
+                RowButton("Вернуться в меню", Q(ClientMenu));
+            }
+            else
+            {
+                PushL("Вы записаны на:");
+                foreach (var item in list)
+                {
+                    var requestSession = new GetSession.Request((int)item.SessionId);
+                    var getSessionResponse = await _mediator.Send(requestSession);
+                    var session = getSessionResponse.Session;
+                    RowButton($"{session.From}", Q(SessionInfo, session));
+                }
+                RowButton("Вернуться в меню", Q(ClientMenu));
+            }
+        }
+        [Action]
+        public async Task SessionInfo(Session session)
+        {
+            PushL($"Дата: {session.From}");
+            var request = new GetCoach.Request(session.CoachId);
+            var getCoachResponse = await _mediator.Send(request);
+            var coach = getCoachResponse.Coach;
+            PushL($"Тренер:{coach.Name}");
+            RowButton("Отменить запись", Q(UnSubscribeToSessionButton, session));
+            RowButton("Вернуться в меню", Q(ClientMenu));
+        }
+
+
+
+        [Action]
+        public async Task CoachListOfSessions(Coach coach)
+        {
+            var request = new GetSessionsByCoachId.Request(coach.ChatId);
+            var ListResponse = await _mediator.Send(request);
+            var list = ListResponse.SessionList;
+            if (!list.Any())
+            {
+                PushL("У тренера нет свободных сессий");
+                RowButton("Вернуться в меню", Q(CoachMenu, coach));
+            }
+            else
+            {
+                PushL("Доступные сессии:");
+                foreach (var item in list)
+                {
+                    RowButton($"{item.From.ToLocalTime()}", Q(SessionMenu, item)); 
+                }
+                RowButton("Вернуться в меню", Q(CoachMenu, coach));
+            }
+        }
+        [Action]
+        public async Task SessionMenu(Session session)
+        {
+            PushL($"Дата: {session.From}");
+            RowButton("Записаться", Q(SubscribeToSessionButton, session));
+            RowButton("Вернуться в меню", Q(ClientMenu));
+        }
+
+        [Action]
+        public async Task SubscribeToSessionButton(Session session)
+        {
+            var chatId = Context.UserId();
+            await SubscribeToSession(chatId, session.Id);
+            PushL("Вы успешно записались");
+            RowButton("Вернуться в меню", Q(ClientMenu));
+        }
+
+        [Action]
+        public async Task UnSubscribeToSessionButton(Session session)
+        {
+            var chatId = Context.UserId();
+            await DeleteClientToSessoin(chatId, session.Id);
+            PushL("Вы отменили запись");
+            RowButton("Вернуться в меню", Q(ClientMenu));
+        }
+
         [Action]
         public async Task NearestSession()
         {
@@ -108,10 +208,10 @@ namespace Gymopedia.Controllers
         }
 
 
-        [Action("/GetFromName")]
+        [Action]
         public async Task FindCoach()
         {
-            PushL("Введите имя теренера");
+            PushL("Введите имя теренера или id");
             Fill_Comment(await GetAState<FillState>());
             await Send();
         }
@@ -127,17 +227,19 @@ namespace Gymopedia.Controllers
         void Fill_Comment([State] FillState state)
         {
             State(new SetCommentState());
-            RowButton("Найти", Q(Name));
+            RowButton("Найти по имени", Q(FindByName));
+            RowButton("Найти по id", Q(FindById));
         }
 
 
 
         [Action]
-        async Task Name()
+        async Task FindByName()
         {
             var fillState = await GetAState<FillState>();
             string Name = fillState.Comment;
-            var coach = await GetFromName(Name);
+            Name = Name.Trim(new char[] { '@'});
+            var coach = await GetByName(Name);
 
             if(coach!= null) 
             {
@@ -146,6 +248,36 @@ namespace Gymopedia.Controllers
                 PushL(coach.ChatId.ToString());
 
                 RowButton("подписаться", Q(Subscribe, coach) );
+            }
+            else
+            {
+                PushL("Тренер не найден");
+                RowButton("Попробовать снова", Q(FindCoach));
+                RowButton("Вернуться в меню", Q(ClientMenu));
+            }
+        }
+
+        [Action]
+        async Task FindById()
+        {
+            var fillState = await GetAState<FillState>();
+            string numberStr = fillState.Comment;
+            long chatId;
+            bool isParsable = long.TryParse(numberStr, out chatId);
+            Coach coach = null;
+            if (isParsable)
+            {
+                var request = new GetCoach.Request(chatId);
+                var getCoachResponse = await _mediator.Send(request);
+                coach = getCoachResponse.Coach;
+            }
+            if (coach != null)
+            {
+                PushL(coach.Name);
+                PushL(coach.Id.ToString());
+                PushL(coach.ChatId.ToString());
+
+                RowButton("подписаться", Q(Subscribe, coach));
             }
             else
             {
@@ -186,6 +318,38 @@ namespace Gymopedia.Controllers
         }
         record SetCommentState;
 
+        #region ClientToSession
+        public async Task SubscribeToSession(long clientId, int sessionId)
+        {
+            var request = new SubscribeToSession.Request(clientId, sessionId);
+            var subscribeToSessionResponse = await _mediator.Send(request);
+        }
+        public async Task<ClientToSession> GetClientToSessoin(long clientId, int sessionId)
+        {
+            var request = new GetClientToSession.Request(clientId, sessionId);
+
+            var getClientToSessionResponse = await _mediator.Send(request);
+
+            return getClientToSessionResponse.ClientToSession;
+        }
+        public async Task DeleteClientToSessoin(long clientId, int sessionId)
+        {
+            var request = new DeleteClientToSession.Request(clientId, sessionId);
+
+            var deleteClientToSessionResponse = await _mediator.Send(request);
+
+        }
+        public async Task<Session> GetSession(int sessionId, CancellationToken cancellationToken)
+        {
+            var request = new GetSession.Request(sessionId);
+
+            var getSessionResponse = await _mediator.Send(request, cancellationToken);
+
+            return getSessionResponse.Session;
+        }
+
+        #endregion
+
         #region clientToCoach
         [HttpPost]
         [Route("/subscribeToCoach")]
@@ -219,7 +383,7 @@ namespace Gymopedia.Controllers
         #region rest
 
         [Action]
-        public async Task<Coach> GetFromName(string Name)
+        public async Task<Coach> GetByName(string Name)
         {
             var request = new GetCoachFromName.Request(Name);
             var getCoachResponse = await _mediator.Send(request);

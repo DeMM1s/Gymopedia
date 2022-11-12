@@ -10,6 +10,6 @@ namespace Gymopedia.Core.Models
 
         public ICollection<Client> Clients { get; init; } = new List<Client>();
 
-        public Calendar? Calendar { get; init; }
+        public MyCalendar? Calendar { get; init; }
     }
 }

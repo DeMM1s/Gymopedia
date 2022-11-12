@@ -6,10 +6,10 @@ using MediatR;
 
 namespace Gymopedia.Core.ClientToSessions
 {
-    public class DeleteClientToSession
+    public class GetAllClientToSession
     {
-        public record Request(long clientId, int sessionId) : IRequest<Response>;
-        public record Response(long clientId, string? Error = null);
+        public record Request(long clientId) : IRequest<Response>;
+        public record Response(List<ClientToSession> ClientToSessionList, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>
         {
@@ -20,8 +20,8 @@ namespace Gymopedia.Core.ClientToSessions
             }
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                await _clientToSessionRepository.Delete(request.clientId, request.sessionId, cancellationToken);
-                return new Response(request.clientId);
+                var List = await _clientToSessionRepository.GetAll(request.clientId, cancellationToken);
+                return new Response(List);
             }
         }
     }

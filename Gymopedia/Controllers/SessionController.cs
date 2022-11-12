@@ -18,21 +18,6 @@ namespace Gymopedia.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost("/createSession")]
-        public async Task<SessionDto> CreateSession(CreateSessionInput input, CancellationToken cancellationToken)
-        {
-            var request = new CreateSession.Request(input.From, input.Until, input.MaxClient, input.CoachWorkDayId);
-            var createSessionResponse = await _mediator.Send(request, cancellationToken);
-
-            return new SessionDto
-            {
-                From = createSessionResponse.Session.From,
-                Until = createSessionResponse.Session.Until,
-                MaxClient = createSessionResponse.Session.MaxClient,
-                ClientIds = createSessionResponse.Session.ClientIds,
-                CoachWorkDayId = createSessionResponse.Session.CoachWorkDayId,
-            };
-        }
         [HttpGet]
         [Route("/getSession")]
         public async Task<IActionResult> Get(int sessionId, CancellationToken cancellationToken)
