@@ -6,10 +6,9 @@ namespace Gymopedia.Domain.Models
     {
         public int Id { get; init; }
         public DateTime From { get; init; }
-        public DateTime Until { get; init; }
         public int CoachWorkDayIdOwner { get; init; }
         public long CoachId { get; init; }
-        public int currentNumberOfClients { get; init; }
+
         private int _maxClient;
 
         public Session()        {        }

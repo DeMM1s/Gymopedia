@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\ClientToSession.cs" />
+    <Compile Remove="Clients\ClientSesndler.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,10 +22,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Gymopedia.Domain\Gymopedia.Domain.csproj" />
     <ProjectReference Include="..\Gymopedia.Telegram\Gymopedia.Telegram.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Telegram\" />
   </ItemGroup>
 
 </Project>
