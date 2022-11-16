@@ -1,4 +1,4 @@
-﻿using Gymopedia.Core.Models;
+﻿using Gymopedia.Domain.DtoModels;
 using Gymopedia.Domain.Repositories;
 using Gymopedia.Domain.Models;
 using MediatR;

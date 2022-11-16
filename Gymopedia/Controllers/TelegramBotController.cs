@@ -6,7 +6,6 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using Gymopedia.Telegram.Telegram;
-using Gymopedia.Inputs;
 using Deployf.Botf;
 using System.Threading;
 

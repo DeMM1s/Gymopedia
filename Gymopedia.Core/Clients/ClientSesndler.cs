@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gymopedia.Core.Models
+namespace Gymopedia.Core.Clients
 {
-    public class ClientToSession
+    internal class ClientSesndler
     {
     }
 }

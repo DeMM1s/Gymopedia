@@ -37,6 +37,22 @@ namespace Gymopedia.Data.Repository
             return List;
         }
 
+        public async Task<List<ClientToSession>> GetAllBySession(long sessionId, CancellationToken cancellationToken)
+        {
+            var data = Context.ClientToSession.Where(o => o.SessionId == sessionId);
+            var List = new List<ClientToSession>();
+            foreach (var item in data)
+            {
+                List.Add(new ClientToSession
+                {
+                    ClientId = item.ClientId,
+                    Id = item.Id,
+                    SessionId = item.SessionId
+                });
+            }
+            return List;
+        }
+
         public async Task Delete(long clientId, long sessionId, CancellationToken cancellationToken)
         {
             ClientToSession ClientToSession = await Context.ClientToSession.FirstOrDefaultAsync(o => o.ClientId == clientId && o.SessionId == sessionId, cancellationToken);

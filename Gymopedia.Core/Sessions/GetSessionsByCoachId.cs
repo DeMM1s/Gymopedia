@@ -1,4 +1,4 @@
-﻿using Gymopedia.Core.Models;
+﻿using Gymopedia.Domain.DtoModels;
 using Gymopedia.Domain.Repositories;
 using Gymopedia.Domain.Models;
 using Gymopedia.Infrastructure.Constants;
@@ -6,10 +6,10 @@ using MediatR;
 
 namespace Gymopedia.Core.Sessions
 {
-    public class GetSessionsByCoachId
+    public class GetActualSessionsByCoachId
     {
         public record Request(long CoachId) : IRequest<Response>;
-        public record Response(List<Session>? SessionList, string? Error = null);
+        public record Response(List<SessionDto>? SessionList, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>
         {

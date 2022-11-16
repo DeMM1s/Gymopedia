@@ -1,22 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Gymopedia.Core.Models;
 using Gymopedia.Domain.Models;
+using Gymopedia.Domain.DtoModels;
 using Gymopedia.Core.Clients;
 using Gymopedia.Core.Coaches;
 using Gymopedia.Core.Sessions;
 using Gymopedia.Core.ClientToCoachs;
 using Gymopedia.Core.ClientToSessions;
-using Gymopedia.Inputs;
+using Gymopedia.Core.Telegram;
 using MediatR;
 using Deployf.Botf;
 
 namespace Gymopedia.Controllers
 {
-    //[Route("/client")]
     public class ClientController : BotController
     {
         private readonly IMediator _mediator;
-
         public ClientController(IMediator mediator)
         {
             _mediator = mediator;
@@ -33,7 +31,7 @@ namespace Gymopedia.Controllers
                 var Name = Context.GetUsername();
                 if (Name == null)
                 {
-
+                    
                 }
                 client = await CreateClient(Name, chatId);
                 PushL("Вы успешно зарегестрированы");
@@ -56,6 +54,7 @@ namespace Gymopedia.Controllers
             RowButton("Мои тренера", Q(ListOfCoaches));
             RowButton("Мои записи", Q(MyListOfSessions));
             RowButton("Ближайшая тренировка", Q(NearestSession));
+            RowButton("Посмотреть иссторию сессий", Q(SessionHistory));
             Send();
         }
 
@@ -64,7 +63,6 @@ namespace Gymopedia.Controllers
         {
             var chatId = Context.UserId();
             var client = await Get(chatId);
-
             PushL($"Ваше имя: {client.Name}");
             RowButton("Вернуться в меню", Q(ClientMenu));
         }
@@ -135,20 +133,52 @@ namespace Gymopedia.Controllers
                     var requestSession = new GetSession.Request((int)item.SessionId);
                     var getSessionResponse = await _mediator.Send(requestSession);
                     var session = getSessionResponse.Session;
+                    if(session != null)
                     RowButton($"{session.From}", Q(SessionInfo, session));
                 }
                 RowButton("Вернуться в меню", Q(ClientMenu));
             }
         }
+
+        [Action]
+        public async Task SessionHistory()
+        {
+            var chatId = Context.UserId();
+            var request = new GetAllClientToSession.Request(chatId);
+            var ListResponse = await _mediator.Send(request);
+            var list = ListResponse.ClientToSessionList;
+            if (!list.Any())
+            {
+                PushL("Вы никогда не были записаны на какую-либо сессию");
+                RowButton("Вернуться в меню", Q(ClientMenu));
+            }
+            else
+            {
+                PushL("Вы были записаны на:");
+                foreach (var item in list)
+                {
+                    var requestSession = new GetSession.Request((int)item.SessionId);
+                    var getSessionResponse = await _mediator.Send(requestSession);
+                    var session = getSessionResponse.Session;
+                    if (session != null)
+                        RowButton($"{session.From}", Q(SessionInfo, session));
+                }
+                RowButton("Вернуться в меню", Q(ClientMenu));
+            }
+        }
+
         [Action]
         public async Task SessionInfo(Session session)
         {
-            PushL($"Дата: {session.From}");
+            PushL($"Дата: {session.From.ToLocalTime()}");
             var request = new GetCoach.Request(session.CoachId);
             var getCoachResponse = await _mediator.Send(request);
             var coach = getCoachResponse.Coach;
             PushL($"Тренер:{coach.Name}");
-            RowButton("Отменить запись", Q(UnSubscribeToSessionButton, session));
+            if (session.From > DateTime.Now.AddMinutes(5))
+            {
+                RowButton("Отменить запись", Q(UnSubscribeToSessionButton, session));
+            }
             RowButton("Вернуться в меню", Q(ClientMenu));
         }
 
@@ -157,13 +187,13 @@ namespace Gymopedia.Controllers
         [Action]
         public async Task CoachListOfSessions(Coach coach)
         {
-            var request = new GetSessionsByCoachId.Request(coach.ChatId);
+            var request = new GetActualSessionsByCoachId.Request(coach.ChatId);
             var ListResponse = await _mediator.Send(request);
             var list = ListResponse.SessionList;
             if (!list.Any())
             {
                 PushL("У тренера нет свободных сессий");
-                RowButton("Вернуться в меню", Q(CoachMenu, coach));
+                RowButton("Вернуться в меню", Q(ClientMenu));
             }
             else
             {
@@ -172,11 +202,11 @@ namespace Gymopedia.Controllers
                 {
                     RowButton($"{item.From.ToLocalTime()}", Q(SessionMenu, item)); 
                 }
-                RowButton("Вернуться в меню", Q(CoachMenu, coach));
+                RowButton("Вернуться в меню", Q(ClientMenu));
             }
         }
         [Action]
-        public async Task SessionMenu(Session session)
+        public async Task SessionMenu(SessionDto session)
         {
             PushL($"Дата: {session.From}");
             RowButton("Записаться", Q(SubscribeToSessionButton, session));
@@ -184,12 +214,14 @@ namespace Gymopedia.Controllers
         }
 
         [Action]
-        public async Task SubscribeToSessionButton(Session session)
+        public async Task SubscribeToSessionButton(SessionDto session)
         {
             var chatId = Context.UserId();
             await SubscribeToSession(chatId, session.Id);
             PushL("Вы успешно записались");
             RowButton("Вернуться в меню", Q(ClientMenu));
+            var _sendler = new Sendler(Context.Bot.Client);
+            _sendler.Exec("Клиент записался на сессию", session.CoachId);
         }
 
         [Action]
@@ -199,12 +231,26 @@ namespace Gymopedia.Controllers
             await DeleteClientToSessoin(chatId, session.Id);
             PushL("Вы отменили запись");
             RowButton("Вернуться в меню", Q(ClientMenu));
+            var _sendler = new Sendler(Context.Bot.Client);
+            _sendler.Exec("Клиент отменил запись", session.CoachId);
         }
 
         [Action]
         public async Task NearestSession()
         {
-
+            var chatId = Context.UserId();
+            var request = new GetNearestSession.Request(chatId);
+            var Response = await _mediator.Send(request);
+            var session = Response.Session;
+            if (session == null)
+            {
+                PushL("У вас нет ближайших тренировок");
+                RowButton("Вернуться в меню", Q(ClientMenu));
+            }
+            else
+            {
+                SessionInfo(session);
+            }
         }
 
 
@@ -229,6 +275,7 @@ namespace Gymopedia.Controllers
             State(new SetCommentState());
             RowButton("Найти по имени", Q(FindByName));
             RowButton("Найти по id", Q(FindById));
+            RowButton("Вернуться в меню", Q(ClientMenu));
         }
 
 
@@ -238,7 +285,10 @@ namespace Gymopedia.Controllers
         {
             var fillState = await GetAState<FillState>();
             string Name = fillState.Comment;
-            Name = Name.Trim(new char[] { '@'});
+            if (!string.IsNullOrEmpty(Name))
+            {
+                Name = Name.Trim(new char[] { '@' });
+            }
             var coach = await GetByName(Name);
 
             if(coach!= null) 
@@ -380,7 +430,7 @@ namespace Gymopedia.Controllers
         }
         #endregion
 
-        #region rest
+        #region Client
 
         [Action]
         public async Task<Coach> GetByName(string Name)

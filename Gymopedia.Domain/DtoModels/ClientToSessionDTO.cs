@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Gymopedia.Core.Models
+namespace Gymopedia.Domain.DtoModels
 {
     public class ClientToSessionDTO
     {

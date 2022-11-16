@@ -1,4 +1,4 @@
-﻿using Gymopedia.Core.Models;
+﻿using Gymopedia.Domain.DtoModels;
 using Gymopedia.Domain.Repositories;
 using Gymopedia.Domain.Models;
 using Gymopedia.Infrastructure.Constants;
@@ -9,7 +9,7 @@ namespace Gymopedia.Core.Sessions
     public class DeleteSession
     {
         public record Request(int ID) : IRequest<Response>;
-        public record Response(SessionDto? Session, string? Error = null);
+        public record Response(Session? Session, string? Error = null);
 
         public class Handler : IRequestHandler<Request, Response>
         {
@@ -25,10 +25,7 @@ namespace Gymopedia.Core.Sessions
                 {
                     return new Response(null, Constants.ErrorMessage.Session.SessionNotFoundError);
                 }
-                return new Response(new SessionDto
-                {
-                    
-                });
+                return new Response(session);
             }
         }
     }

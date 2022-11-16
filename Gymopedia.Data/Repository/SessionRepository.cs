@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Gymopedia.Domain.Repositories;
+using Gymopedia.Domain.DtoModels;
 using Gymopedia.Domain.Models;
 
 namespace Gymopedia.Data.Repository
@@ -20,19 +21,89 @@ namespace Gymopedia.Data.Repository
             return await Context.Sessions.FirstOrDefaultAsync(o => o.Id == sessionId, cancellationToken);
         }
 
-        public async Task<List<Session>> GetAllByCoachId(long coachId, CancellationToken cancellationToken)
+        public async Task<Session?> GetNearestSession(long clientId, CancellationToken cancellationToken)
         {
-            var data = Context.Sessions.Where(o => o.CoachId == coachId);
-            var List = new List<Session>();
+            DateTime time = DateTime.UtcNow;
+            var session = (from s in Context.Sessions
+                           join c in Context.ClientToSession on s.Id equals c.SessionId
+                           where c.ClientId == clientId && s.From > time
+                           orderby s.From
+                           select new
+                           { 
+                               Id = s.Id,
+                               From = s.From,
+                               CoachId = s.CoachId,
+                           }).Take(1);
+            if (session.Any())
+            {
+                Session response = new Session
+                {
+                    Id = session.First().Id,
+                    From = session.First().From,
+                    CoachId = session.First().CoachId
+                };
+                return response;
+            }
+            else return null;
+            
+        }
+
+        public async Task<SessionDto?> GetNearestClient(long coachId, CancellationToken cancellationToken)
+        {
+            DateTime time = DateTime.UtcNow;
+            var session = (from s in Context.Sessions
+                           join c in Context.ClientToSession on s.Id equals c.SessionId
+                           where s.CoachId == coachId && s.From > time
+                           orderby s.From
+                           select new
+                           {
+                               Id = s.Id,
+                               From = s.From,
+                               CoachId = s.CoachId,
+                           }).Take(1);
+            if (session.Any())
+            {
+                SessionDto response = new SessionDto
+                {
+                    Id = session.First().Id,
+                    From = session.First().From,
+                    CoachId = session.First().CoachId
+                };
+                return response;
+            }
+            else return null;
+
+        }
+
+        public async Task<List<SessionDto>> GetAllByCoachId(long coachId, CancellationToken cancellationToken)
+        {
+            var time = DateTime.UtcNow;
+            var data = Context.Sessions.Where(o => o.CoachId == coachId && o.From > time);
+            var List = new List<SessionDto>();
             foreach (var item in data)
             {
-                List.Add(new Session
+                List.Add(new SessionDto
                 {
-                    currentNumberOfClients = item.currentNumberOfClients,
                     Id = item.Id,
                     CoachId = item.CoachId,
                     From = item.From
                 }) ;
+            }
+            return List;
+        }
+
+        public async Task<List<SessionDto>> GetHistoryByCoachId(long coachId, CancellationToken cancellationToken)
+        {
+            var data = Context.Sessions.Where(o => o.CoachId == coachId);
+            var List = new List<SessionDto>();
+            foreach (var item in data)
+            {
+                List.Add(new SessionDto
+                {
+                    Id = item.Id,
+                    CoachId = item.CoachId,
+                    From = item.From
+                });
             }
             return List;
         }

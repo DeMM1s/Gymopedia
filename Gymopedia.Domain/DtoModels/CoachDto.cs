@@ -1,6 +1,6 @@
 ﻿using Gymopedia.Domain.Models;
 
-namespace Gymopedia.Core.Models
+namespace Gymopedia.Domain.DtoModels
 {
     public class CoachDto
     {

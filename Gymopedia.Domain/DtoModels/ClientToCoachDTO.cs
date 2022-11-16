@@ -1,5 +1,5 @@
 ﻿
-namespace Gymopedia.Core.Models
+namespace Gymopedia.Domain.DtoModels
 {
     public class ClientToCoachDTO
     {
