@@ -9,6 +9,8 @@ using Gymopedia.Core.ClientToCoachs;
 using Gymopedia.Core.ClientToSessions;
 using Telegram.Bot;
 using Deployf.Botf;
+using Hangfire;
+using Hangfire.PostgreSql;
 
 namespace Gymopedia
 {
@@ -36,6 +38,12 @@ namespace Gymopedia
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             services.AddBotf("5493236640:AAHJ9TKD1BQ2rbYMfQtnaxiwVHpsE9GYlrE");
+            services.AddHangfire(c => c.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                 .UseColouredConsoleLogProvider()
+                 .UseSimpleAssemblyNameTypeSerializer()
+                 .UseRecommendedSerializerSettings()
+                 .UsePostgreSqlStorage("Host=127.0.0.1;Username=test;Password=test;Database=test;"));
+            services.AddHangfireServer();
         }
 
         public void Configure(IApplicationBuilder app)

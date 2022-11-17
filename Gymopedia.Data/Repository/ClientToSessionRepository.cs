@@ -16,9 +16,9 @@ namespace Gymopedia.Data.Repository
             Context.ClientToSession.Add(ClientToSession);
         }
 
-        public async Task<ClientToSession?> Get(long clientId, CancellationToken cancellationToken)
+        public async Task<ClientToSession?> Get(long clientId,long sessionId , CancellationToken cancellationToken)
         {
-            return await Context.ClientToSession.FirstOrDefaultAsync(o => o.Id == clientId, cancellationToken);
+            return await Context.ClientToSession.FirstOrDefaultAsync(o => o.ClientId == clientId&& o.SessionId == sessionId, cancellationToken);
         }
 
         public async Task<List<ClientToSession>> GetAll(long clientId, CancellationToken cancellationToken)
@@ -56,7 +56,6 @@ namespace Gymopedia.Data.Repository
         public async Task Delete(long clientId, long sessionId, CancellationToken cancellationToken)
         {
             ClientToSession ClientToSession = await Context.ClientToSession.FirstOrDefaultAsync(o => o.ClientId == clientId && o.SessionId == sessionId, cancellationToken);
-
             Context.ClientToSession.Remove(ClientToSession);
             Context.SaveChanges();
         }

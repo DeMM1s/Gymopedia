@@ -7,7 +7,7 @@ namespace Gymopedia.Core.Coaches
 {
     public class CreateCoach
     {
-        public record Request(string Name, long ChatId) : IRequest<Response>;
+        public record Request(string Name,string FullName, long ChatId) : IRequest<Response>;
 
         public record Response(Coach Coach);
         public class Handler : IRequestHandler<Request, Response>
@@ -20,7 +20,7 @@ namespace Gymopedia.Core.Coaches
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
                 var coach = new Coach(
-                    request.Name, request.ChatId);
+                    request.Name, request.FullName, request.ChatId);
 
                 _coachRepository.Add(coach);
                 await _coachRepository.Commit(cancellationToken);

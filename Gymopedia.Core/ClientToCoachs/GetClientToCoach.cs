@@ -20,10 +20,7 @@ namespace Gymopedia.Core.ClientToCoachs
             }
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var clientToCoach = new ClientToCoach { ClientId = request.clientId, CoachId = request.coachId };
-
-                await _clientToCoachRepository.Commit(cancellationToken);
-
+                var clientToCoach = await _clientToCoachRepository.Get(request.clientId, request.coachId, cancellationToken);
                 return new Response(clientToCoach);
             }
         }

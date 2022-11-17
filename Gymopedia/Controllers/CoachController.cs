@@ -28,14 +28,19 @@ namespace Gymopedia.Controllers
             if (coach == null)
             {
                 var Name = Context.GetUsername();
-                coach = await Create (Name, chatId);
+                var FullName = Context.GetUserFullName();
+                if (Name == null)
+                {
+                    PushL($"Ой кажется у вас нету @userName в таком случае вас можно найти по id:{chatId}");
+                }
+                coach = await Create (Name, FullName, chatId);
                 PushL("Вы успешно зарегестрированы");
             }
             else
             {
                 PushL("Мы вас помним");
             }
-            PushL($"Здравсвуйте, {coach.Name}");
+            PushL($"Здравсвуйте, {coach.FullName}");
             await Send();
             CoachMenu();
         }
@@ -43,7 +48,7 @@ namespace Gymopedia.Controllers
         public async Task CoachMenu()
         {
             PushL("Меню");
-            RowButton("Посмотреть информацию обо мне", Q(AboutMe));
+            RowButton("Как меня найти", Q(AboutMe));
             RowButton("Мои сессии",Q(MySessions));
             RowButton("Ближайший клиент",Q(NearestClient));
             Send();
@@ -54,8 +59,10 @@ namespace Gymopedia.Controllers
         {
             var chatId = Context.UserId();
             var coach = await Get(chatId);
-
-            PushL($"Ваше имя: {coach.Name}");
+            if (coach.Name != null)
+            {
+                PushL($"Ваш @userName: {coach.Name}");
+            } else PushL($"Ваш Id: {coach.Id}");
             RowButton("Вернуться в меню", Q(CoachMenu));
         }
         [Action]
@@ -119,11 +126,18 @@ namespace Gymopedia.Controllers
         async Task SessionMenu(SessionDto session)
         {
             PushL($"{session.From.ToLocalTime()}, клиентов: {session.ClientCount}, id: {session.Id}");
+            //RowButton("напомнить", Q(remindButton, session));
             RowButton("отменить сессию", Q(DeleteSessionButton, session));
             RowButton("назад", Q(ListOfSessions));
             RowButton("Вернуться в меню", Q(CoachMenu));
         }
-
+        //[Action]
+        //async Task remindButton(SessionDto session)
+        //{
+        //    Remind remind = new Remind(Client, session);
+        //    SessionReminder sr = new SessionReminder(_mediator);
+        //    sr.SendRemind(remind);
+        //}
         [Action]
         async Task DeleteSessionButton(SessionDto session)
         {
@@ -155,6 +169,7 @@ namespace Gymopedia.Controllers
                 PushL(comment);
                 foreach (var item in list)
                 {
+                    await DeleteClientToSessoin(item.ClientId, session.Id);
                     _sendler.Exec(comment, item.ClientId);
                 }
             }
@@ -300,10 +315,19 @@ namespace Gymopedia.Controllers
         #endregion
 
         #region REST
-        [Action]
-        public async Task<Coach> Create(string Name, long chatId)
+
+        public async Task DeleteClientToSessoin(long clientId, int sessionId)
         {
-            var request = new CreateCoach.Request(Name, chatId);
+            var request = new DeleteClientToSession.Request(clientId, sessionId);
+
+            var deleteClientToSessionResponse = await _mediator.Send(request);
+
+        }
+
+        [Action]
+        public async Task<Coach> Create(string Name, string FullName, long chatId)
+        {
+            var request = new CreateCoach.Request(Name, FullName, chatId);
             var createCoachResponse = await _mediator.Send(request);
             return createCoachResponse.Coach;
         }

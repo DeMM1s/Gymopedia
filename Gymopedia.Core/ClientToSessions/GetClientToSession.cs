@@ -20,9 +20,7 @@ namespace Gymopedia.Core.ClientToSessions
             }
             public async Task<Response> Handle(Request request, CancellationToken cancellationToken)
             {
-                var clientToSession = new ClientToSession { ClientId = request.clientId, SessionId = request.sessionId };
-
-                await _clientToSessionRepository.Commit(cancellationToken);
+                var clientToSession = await _clientToSessionRepository.Get(request.clientId, request.sessionId, cancellationToken);
 
                 return new Response(clientToSession);
             }
