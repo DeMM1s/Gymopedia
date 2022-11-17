@@ -9,6 +9,7 @@ using Gymopedia.Core.ClientToSessions;
 using Gymopedia.Core.Telegram;
 using MediatR;
 using Deployf.Botf;
+using Hangfire;
 
 namespace Gymopedia.Controllers
 {
@@ -28,11 +29,7 @@ namespace Gymopedia.Controllers
 
             if (client == null)
             {
-                var Name = Context.GetUsername();
-                if (Name == null)
-                {
-                    
-                }
+                var Name = Context.GetUserFullName();  
                 client = await CreateClient(Name, chatId);
                 PushL("Вы успешно зарегестрированы");
             }
@@ -175,6 +172,14 @@ namespace Gymopedia.Controllers
             var getCoachResponse = await _mediator.Send(request);
             var coach = getCoachResponse.Coach;
             PushL($"Тренер:{coach.Name}");
+
+            ScheduleAction(new SessionDto
+            {
+                Id = session.Id,
+                CoachId = coach.Id,
+                From = session.From
+            });
+
             if (session.From > DateTime.Now.AddMinutes(5))
             {
                 RowButton("Отменить запись", Q(UnSubscribeToSessionButton, session));
@@ -217,11 +222,19 @@ namespace Gymopedia.Controllers
         public async Task SubscribeToSessionButton(SessionDto session)
         {
             var chatId = Context.UserId();
-            await SubscribeToSession(chatId, session.Id);
-            PushL("Вы успешно записались");
+
+            var clientToSession = await GetClientToSessoin(chatId, session.Id);
+
+            if(clientToSession == null)
+            {
+                await SubscribeToSession(chatId, session.Id);
+                PushL("Вы успешно записались");
+                var _sendler = new Sendler(Context.Bot.Client);
+                _sendler.Exec("Клиент записался на сессию", session.CoachId);
+
+                ScheduleAction(session);
+            } else PushL("Вы уже записаны");
             RowButton("Вернуться в меню", Q(ClientMenu));
-            var _sendler = new Sendler(Context.Bot.Client);
-            _sendler.Exec("Клиент записался на сессию", session.CoachId);
         }
 
         [Action]
@@ -352,9 +365,13 @@ namespace Gymopedia.Controllers
         public async ValueTask Subscribe(Coach coach)
         {
             var chatId = Context.UserId();
-            var subscribeToCoach = await SubscribeToCoach(chatId, coach.ChatId);
-            PushL($"Вы подписались на {coach.Name}");
-            PushL(subscribeToCoach.Id.ToString());
+            var subscribeToCoach = await GetClientToCoach(chatId, coach.ChatId);
+            if(subscribeToCoach == null)
+            {
+                await SubscribeToCoach(chatId, coach.ChatId);
+                PushL($"Вы подписались на {coach.Name}");
+            } else
+            PushL($"Вы уже подписанны на {coach.Name}");
             RowButton("Вернуться в меню", Q(ClientMenu));
             await Send();
         }
@@ -367,6 +384,18 @@ namespace Gymopedia.Controllers
             await AState(fillState);
         }
         record SetCommentState;
+        public async Task ScheduleAction(SessionDto session)
+        {
+            var model = new Remind(Client, session, _mediator);
+            var job = BackgroundJob.Schedule<SessionReminder>(c => c.SendRemind(model), TimeSpan.FromSeconds(5));
+        }
+
+        public async Task<List<ClientToSession>> GetAllClientsBySession(int sessionId)
+        {
+            var request = new GetAllClientsBySession.Request(sessionId);
+            var ListResponse = await _mediator.Send(request);
+            return ListResponse.ClientToSessionList;
+        }
 
         #region ClientToSession
         public async Task SubscribeToSession(long clientId, int sessionId)
@@ -412,12 +441,11 @@ namespace Gymopedia.Controllers
         }
         [HttpGet]
         [Route("/getClientToCoach")]
-        public async Task Get(long clientId, long coachId, CancellationToken cancellationToken)
+        public async Task<ClientToCoach> GetClientToCoach(long clientId, long coachId)
         {
             var request = new GetClientToCoach.Request(clientId, coachId);
-
-            var getClientToCoachResponse = await _mediator.Send(request, cancellationToken);
-
+            var getClientToCoachResponse = await _mediator.Send(request);
+            return getClientToCoachResponse.ClientToCoach;
         }
         [HttpDelete]
         [Route("/deleteClientToCoach")]

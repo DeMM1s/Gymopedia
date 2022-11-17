@@ -16,9 +16,9 @@ namespace Gymopedia.Data.Repository
             Context.ClientToCoach.Add(ClientToCoach);
         }
 
-        public async Task<ClientToCoach?> Get(long clientId, CancellationToken cancellationToken)
+        public async Task<ClientToCoach?> Get(long clientId,long coachId , CancellationToken cancellationToken)
         {
-            return await Context.ClientToCoach.FirstOrDefaultAsync(o => o.Id == clientId, cancellationToken);
+            return await Context.ClientToCoach.FirstOrDefaultAsync(o => o.ClientId == clientId && o.CoachId == coachId, cancellationToken);
         }
 
         public async Task<List<ClientToCoach>> GetAll(long clientId, CancellationToken cancellationToken)
